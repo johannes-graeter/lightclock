@@ -9,7 +9,7 @@ pathToConfigs = "./config.json"
 # get current time from wifi
 
 # get configs
-maxIntensity = 255
+maxIntensity = 100
 alarmSleepTimeSec = 60.
 sunriseTimeSec = 30. * 60.
 
@@ -20,7 +20,7 @@ except:
     print("blink onboard LED")
 
 try:
-    maxIntensity = config["max_intensity"]
+    maxIntensity = config["max_intensity_percent"]
     alarmSleepTimeSec = config["alarm_sleep_time_sec"]
     sunriseTimeSec = config["sunrise_time_sec"]
 except:
@@ -28,7 +28,7 @@ except:
 
 # create instance of sunrise which will be launched by alarm at the correct time
 s = SunriseExp()
-s.set_max_intensity(maxIntensity)
+s.set_max_intensity_percent(maxIntensity)
 s.set_sunrise_time(sunriseTimeSec)
 s.set_exp_vars(100., 1.5)
 

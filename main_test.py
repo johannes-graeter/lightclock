@@ -13,7 +13,7 @@ def main():
     # get current time from wifi
 
     # get configs
-    maxIntensity = 255
+    maxIntensity = 100
     sleepTimeSec = 60.
 
     config = {}
@@ -23,12 +23,12 @@ def main():
         print("blink onboard LED")
 
     try:
-        maxIntensity = config["max_intensity"]
+        maxIntensity = config["max_intensity_percent"]
         sleepTimeSec = config["alarm_sleep_time_sec"]
     except:
         print("blink twice")
 
-    print("maxIntensity " + str(maxIntensity))
+    print("maxIntensityPercent " + str(maxIntensity))
     print("sleepTimeSec " + str(sleepTimeSec))
 
     # create instance of sunrise which will be launched by alarm at the correct time

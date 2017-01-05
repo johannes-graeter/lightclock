@@ -1,7 +1,7 @@
 import math
 
 try:
-    import pyb
+    import machine
     import utime as time
 except:
     print("using ubuntu testing version")
@@ -14,7 +14,7 @@ class Sunrise(object):
         Attributes:
             intensityProfile (functor): Defines an intensity to a given point in time
                                         This can be overloaded and thus used in a strategy pattern.
-            maxIntensity (int): maximum intensity of the light, maximum value is 255
+            maxIntensityPercent (int): maximum intensity of the light in percent, maximum value is 100
             sunriseTimeSec (float): total time sunrise lasts in seconds
             ledNum (int): number of the pin which controls the led
             delayMs (float): delay in milliseconds after each intensity modification
@@ -22,7 +22,7 @@ class Sunrise(object):
 
     def __init__(self):
         # max intensity
-        self.maxIntensity = 255
+        self.maxIntensityPercent = 100
 
         # rise time
         self.sunriseTimeSec = 60. * 30.
@@ -36,8 +36,8 @@ class Sunrise(object):
         # led delay in millisec
         self.delayMs = 25
 
-    def set_max_intensity(self, maxIntensity):
-        self.maxIntensity = min(int(maxIntensity), 255)
+    def set_max_intensity_percent(self, maxIntensityPerc):
+        self.maxIntensityPercent = min(int(maxIntensityPerc), 100)
 
     def set_intensity_profile(self, func):
         """setter for the intensity profile function
@@ -53,7 +53,7 @@ class Sunrise(object):
 
     def process(self):
         # select led
-        led = pyb.LED(self.ledNum)
+        led = machine.PWM(machine.Pin(self.ledNum), freq=1000)
 
         # save time at beginning
         beginTime = time.time()
@@ -65,13 +65,13 @@ class Sunrise(object):
             intensity = int(self.intensityProfile(dt))
             # get valid range of intensity
             intensity = max(intensity, 0)
-            intensity = min(intensity, self.maxIntensity)
+            intensity = min(intensity, self.maxIntensityPercent)
 
-            # set intensity with pyb pulsing
-            led.intensity(intensity)
+            # set intensity with bandwidth modulation pulsing, max duty val is 1023
+            led.duty(intensity*1023/100)
 
             # delay a bit
-            pyb.delay(self.delayMs)
+            time.sleep_ms(self.delayMs)
 
             # set new dt
             dt = time.time() - beginTime
@@ -95,7 +95,7 @@ class SunriseExp(Sunrise):
         self.c = self.a
 
         self.intensityProfile = lambda x: min(self.a * math.exp(self.b / self.sunriseTimeSec * x) - self.c,
-                                              self.maxIntensity)
+                                              self.maxIntensityPercent)
 
     def set_exp_vars(self, a, b):
         self.a = a
