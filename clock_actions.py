@@ -16,3 +16,5 @@ class StringPrinter:
     def process(self):
         print(self.s)
 
+
+

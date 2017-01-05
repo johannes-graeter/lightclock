@@ -3,6 +3,7 @@ import json
 from alarm import Alarm
 from clock_actions import *
 
+
 def main():
     # this main is for testing on a normal ubuntu system
 
@@ -23,18 +24,17 @@ def main():
 
     try:
         maxIntensity = config["max_intensity"]
-        sleepTimeSec = config["sleep_time_sec"]
+        sleepTimeSec = config["alarm_sleep_time_sec"]
     except:
         print("blink twice")
 
-    print("maxIntensity "+str(maxIntensity))
-    print("sleepTimeSec "+str(sleepTimeSec))
+    print("maxIntensity " + str(maxIntensity))
+    print("sleepTimeSec " + str(sleepTimeSec))
 
     # create instance of sunrise which will be launched by alarm at the correct time
     # read maximum intensity
 
     s = StringPrinter("rise sun!")
-    # Sunrise s(maxIntensity)
 
     # set alarm
     alarm = Alarm(s)
