@@ -6,13 +6,22 @@ Tested with HUZZAH ESP8266 Feather.
 ## Installation
 
 * Install micropython on board <https://docs.micropython.org/en/latest/esp8266/esp8266/tutorial/intro.html>
+* play with the board using picocom: 
+>sudo picocom /dev/ttyUSB0 -b 115200
+* use ampy to put the files on the board
+https://learn.adafruit.com/micropython-basics-load-files-and-run-code/install-ampy
+
+OR
+* use setup connection to router https://learn.adafruit.com/micropython-basics-esp8266-webrepl/access-webrepl
+* enable webREPL with import webrepl_setup
+* download webrepl from github https://github.com/micropython/webrepl.git and start firefox webrepl.html
 * Copy main.py
 * branch off an on, main will start on boot
 
 ## Usage
 
 Offline:
-* plugin your usb cabel and modify config.json and alarmtime.json   
+* plugin your usb cable and modify config.json and alarmtime.json
 
 Online:
 * set up static IP on your router

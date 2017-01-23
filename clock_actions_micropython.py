@@ -16,7 +16,7 @@ class Sunrise(object):
                                         This can be overloaded and thus used in a strategy pattern.
             maxIntensityPercent (int): maximum intensity of the light in percent, maximum value is 100
             sunriseTimeSec (float): total time sunrise lasts in seconds
-            ledNum (int): number of the pin which controls the led
+            ledNum (int): number of the pin which controls the led, notice needs to be bound to ground, so when oin is low LED is on(as for Pin 0 on HUZZAH ESP8266 FEATHER)
             delayMs (float): delay in milliseconds after each intensity modification
     """
 
@@ -34,7 +34,7 @@ class Sunrise(object):
         self.ledNum = 0
 
         # led delay in millisec
-        self.delayMs = 25
+        self.delayMs = 3
 
     def set_max_intensity_percent(self, maxIntensityPerc):
         self.maxIntensityPercent = min(int(maxIntensityPerc), 100)
@@ -52,8 +52,9 @@ class Sunrise(object):
         self.ledNum = num
 
     def process(self):
+        print("start sunrise")
         # select led
-        led = machine.PWM(machine.Pin(self.ledNum), freq=1000)
+        led = machine.PWM(machine.Pin(self.ledNum, machine.Pin.OUT), freq=1000)
 
         # save time at beginning
         beginTime = time.time()
@@ -67,8 +68,8 @@ class Sunrise(object):
             intensity = max(intensity, 0)
             intensity = min(intensity, self.maxIntensityPercent)
 
-            # set intensity with bandwidth modulation pulsing, max duty val is 1023
-            led.duty(intensity*1023/100)
+            # set intensity with bandwidth modulation pulsing, max duty val is 1023, led for pin 0 is on when pin.value()==0
+            led.duty(int(intensity*1023/100))
 
             # delay a bit
             time.sleep_ms(self.delayMs)
