@@ -62,9 +62,12 @@ class Alarm:
         # get expected start time
         expectedTime = time.mktime((tm[0], tm[1], tm[2], self.wakingTime[0],
                                     self.wakingTime[1] - self.actionPreponeTimeMin, tm[5], tm[6], tm[7]))
+        # print("waking at ", end="")
+        # print(time.localtime(expectedTime))
 
         # convert time to seconds, if the time diff is between negative threshold and zero start
         timeDiffSec = expectedTime - time.mktime(tm)
+
         return -3. * self.sleepTimeSec <= timeDiffSec <= 0.
 
     def spin(self):

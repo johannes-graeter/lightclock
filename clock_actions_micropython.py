@@ -52,7 +52,7 @@ class Sunrise(object):
         self.ledNum = num
 
     def process(self):
-        print("start sunrise")
+        # print("start sunrise")
         # select led
         led = machine.PWM(machine.Pin(self.ledNum, machine.Pin.OUT), freq=1000)
 

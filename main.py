@@ -78,7 +78,7 @@ s_startup.set_max_intensity_percent(maxIntensity)
 s_startup.set_sunrise_time(10.)
 s_startup.set_exp_vars(100., 1.5)
 s_startup.process()
-print("end of sunrise")
+# print("end of sunrise")
 
 # turn off the light (why doesn't simply putting low() suffice?
 machine.PWM(machine.Pin(ledNum,machine.Pin.OUT),freq=1000).duty(0)
@@ -93,5 +93,7 @@ s.set_exp_vars(100., 1.5)
 # set alarm
 alarm = Alarm(s)
 alarm.set_sleep_time_spinning_sec(alarmSleepTimeSec)
+# don't prepone for debugging
+alarm.set_action_prepone_time_min(0.)
 
 alarm.spin()
