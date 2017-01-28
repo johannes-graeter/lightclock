@@ -3,6 +3,9 @@ try:
 except:
     import time
 
+try:
+    import machine
+
 
 class Alarm:
     """class that triggers an action at a given time
@@ -78,4 +81,7 @@ class Alarm:
             if self.start():
                 self.action.process()
 
+            # try:
+            #     machine.idle()
+            # except:
             time.sleep(self.sleepTimeSec)
