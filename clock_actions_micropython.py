@@ -34,7 +34,7 @@ class Sunrise(object):
         self.ledNum = 0
 
         # led delay in millisec
-        self.delayMs = 3
+        self.delayMs = 1
 
     def set_max_intensity_percent(self, maxIntensityPerc):
         self.maxIntensityPercent = min(int(maxIntensityPerc), 100)
@@ -54,7 +54,7 @@ class Sunrise(object):
     def process(self):
         # print("start sunrise")
         # select led
-        led = machine.PWM(machine.Pin(self.ledNum, machine.Pin.OUT), freq=1000)
+        led = machine.PWM(machine.Pin(self.ledNum, machine.Pin.OUT), freq=20000)
 
         # save time at beginning
         beginTime = time.time()
