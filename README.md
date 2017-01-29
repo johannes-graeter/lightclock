@@ -25,13 +25,13 @@ Copy files:
     * The accesspoint didn't work for me
 
 * You will need the following files under the same filenames intpo the root directory on the board:
-    * `commons/boot.py`
-    * `commons/connect_to_router.py`
-    * `lightclock/alarm.py`
-    * `lightclock/clock_actions_micropython.py`
-    * `lightclock/main.py`
-    * `lightclock/config.json`
-    * `lightclock/alarmtime.json`
+    * `boot.py`
+    * `connect_to_router.py`
+    * `alarm.py`
+    * `clock_actions_micropython.py`
+    * `main.py`
+    * `config.json`
+    * `alarmtime.json`
 * You will need to configure your private configs. Therefore put the following files into your root directory:
     * `config_wifi.json` where you put the data of your network in the following format, static_ip is the ip which the controller will have at startup:
         ```json
