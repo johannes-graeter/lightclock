@@ -16,14 +16,19 @@ def blink_led(pin_number):
 
 def set_time(utcDelay):
     print("getting ntptime from the internet")
-    while time.localtime()[0] < 2015:
+    is_time_set = False
+    while not is_time_set:
         try:
             ntptime.settime()
+            print("ntp time was set")
+            is_time_set = True
         except:
             time.sleep(1)
             print(".", end="")
-    print("\nadd "+str(utcDelay)+" hour delay to utc")
     tm = time.localtime()
+    print("now its ", end="")
+    print(tm)
+    print("add " + str(utcDelay) + " hour delay to utc")
     # add delay
     tm_sec = time.mktime((tm[0], tm[1], tm[2], tm[3] + utcDelay, tm[4], tm[5], tm[6], tm[7]))
     tm = time.localtime(tm_sec)
@@ -60,28 +65,33 @@ try:
     utcDelay = config["utc_delay"]
 except:
     print("not enough configs specified")
-    blink_led(0)
+    blink_led(2)
     time.sleep(500)
-    blink_led(0)
+    blink_led(2)
     time.sleep(500)
-    blink_led(0)
+    blink_led(2)
 
-ledNum=0
+# ledNum = 15 # use pin without LED branched to it
 
 # set time from wifi
 set_time(utcDelay)
 
 # do one sunrise to show you are there
 s_startup = SunriseExp()
-s_startup.set_led_num(ledNum)
+# try it on 0 pin because it has an led
+s_startup.set_led_num(0)
 s_startup.set_max_intensity_percent(maxIntensity)
 s_startup.set_sunrise_time(10.)
 s_startup.set_exp_vars(100., 1.5)
 s_startup.process()
 # print("end of sunrise")
 
-# turn off the light (why doesn't simply putting low() suffice?
-machine.PWM(machine.Pin(ledNum,machine.Pin.OUT),freq=1000).duty(0)
+# turn off the led (why doesn't simply putting low() suffice?
+machine.PWM(machine.Pin(0,machine.Pin.OUT),freq=20000).duty(1024)
+
+ledNum = 0  # use pin without LED branched to
+if "led_number" in config:
+    ledNum=config["led_number"]
 
 # create instance of sunrise which will be launched by alarm at the correct time
 s = SunriseExp()
@@ -92,6 +102,10 @@ s.set_exp_vars(100., 1.5)
 
 # set alarm
 alarm = Alarm(s)
+
+if "verbose" in config:
+    alarm.set_verbosity(config["verbose"])
+
 alarm.set_sleep_time_spinning_sec(alarmSleepTimeSec)
 # don't prepone for debugging
 alarm.set_action_prepone_time_min(0.)

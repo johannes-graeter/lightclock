@@ -5,6 +5,8 @@ except:
 
 try:
     import machine
+except:
+    pass
 
 
 class Alarm:
@@ -39,6 +41,13 @@ class Alarm:
         # path to file which shall be read
         self.filename = "./alarmtime.json"
 
+        # print next waking time to cout
+        self.verbose = False
+
+    def set_verbosity(self, verbose):
+        self.verbose = verbose
+        print("set verbosity to ", self.verbose)
+
     def set_action_prepone_time_min(self, timeMin):
         self.actionPreponeTimeMin = int(timeMin)
 
@@ -65,13 +74,16 @@ class Alarm:
         # get expected start time
         expectedTime = time.mktime((tm[0], tm[1], tm[2], self.wakingTime[0],
                                     self.wakingTime[1] - self.actionPreponeTimeMin, tm[5], tm[6], tm[7]))
-        # print("waking at ", end="")
-        # print(time.localtime(expectedTime))
+        if self.verbose:
+            print("waking at ", end="")
+            print(time.localtime(expectedTime), end=" ")
+            print("current time is ", end="")
+            print(tm)
 
         # convert time to seconds, if the time diff is between negative threshold and zero start
         timeDiffSec = expectedTime - time.mktime(tm)
 
-        return -3. * self.sleepTimeSec <= timeDiffSec <= 0.
+        return -300. <= timeDiffSec <= 0.
 
     def spin(self):
         """drop in infinite loop to spin alarm"""
@@ -79,6 +91,8 @@ class Alarm:
             self.read_alarmtime()
 
             if self.start():
+                if self.verbose:
+                    print("starting waking action")
                 self.action.process()
 
             # try:

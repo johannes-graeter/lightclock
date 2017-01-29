@@ -2,5 +2,7 @@
     "alarm_sleep_time_sec": 1.0,
     "max_intensity_percent": 90,
     "sunrise_time_sec": 600.0,
-    "utc_delay": 1
+    "utc_delay": 1,
+    "verbose": true,
+    "led_number": 15
 }
