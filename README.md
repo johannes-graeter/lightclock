@@ -29,6 +29,7 @@ Copy files:
     * `connect_to_router.py`
     * `alarm.py`
     * `clock_actions_micropython.py`
+    * `time_setter.py`
     * `main.py`
     * `config.json`
     * `alarmtime.json`
