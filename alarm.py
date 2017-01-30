@@ -8,22 +8,22 @@ try:
 except:
     pass
 
-
 class Alarm:
     """class that triggers an action at a given time
 
         Args:
             action(custom obj with a function process() defined): action that will be performed when the alarm goes off
-
+            time setter(custom obj with a function process() defined): set current system time
         Attributes:
             action (...): action that will be performed when the alarm goes off
             wakingTime (tuple): hour, minutes and seconds of the time to wake up
             sleepTimeSec (int): time in seconds to sleep after each loop while spinning
             actionPreponeTimeMin (int): time in minutes before wakingTime at which action will be triggered
             filename (str): path to file where the alarmtime is saved in the format "%02i:%02i:%02f"%(hour,minutes,seconds)
+            timeSetter (...): object with function process, that sets ntp time on machine
     """
 
-    def __init__(self, action):
+    def __init__(self, action, timeSetter):
         # inputs
         # action to trigger
         self.action = action
@@ -43,6 +43,12 @@ class Alarm:
 
         # print next waking time to cout
         self.verbose = False
+
+        # object that sets ntptime on controller
+        self.timeSetter = timeSetter
+
+        # set the ntp time
+        self.timeSetter.process()
 
     def set_verbosity(self, verbose):
         self.verbose = verbose
@@ -87,6 +93,7 @@ class Alarm:
 
     def spin(self):
         """drop in infinite loop to spin alarm"""
+        count = 0
         while True:
             self.read_alarmtime()
 
@@ -99,3 +106,9 @@ class Alarm:
             #     machine.idle()
             # except:
             time.sleep(self.sleepTimeSec)
+
+            # set ntptime every tenth loop
+            if count > 10:
+                count=0
+                self.timeSetter.process()
+            count += 1

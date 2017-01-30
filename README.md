@@ -65,7 +65,6 @@ OR:
 
 ## Todo
 
-* Test on micro-controller
 * html interface - only server and trigger when html was altered or run parallel?
 
 ## History

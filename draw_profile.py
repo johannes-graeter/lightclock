@@ -8,6 +8,7 @@ def main():
     sunriseTime=20.*60.
     s = SunriseExp()
     s.set_sunrise_time(sunriseTime)
+    s.set_exp_vars(5., 3.5)
 
     p = ProfilePlotter()
 
