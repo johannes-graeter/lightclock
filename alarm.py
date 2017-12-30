@@ -3,10 +3,10 @@ try:
 except:
     import time
 
-try:
-    import machine
-except:
-    pass
+# try:
+#     import machine
+# except:
+#     pass
 
 class Alarm:
     """class that triggers an action at a given time
@@ -78,8 +78,12 @@ class Alarm:
         tm = time.localtime()
 
         # get expected start time
-        expectedTime = time.mktime((tm[0], tm[1], tm[2], self.wakingTime[0],
+        try:
+            expectedTime = time.mktime((tm[0], tm[1], tm[2], self.wakingTime[0],
                                     self.wakingTime[1] - self.actionPreponeTimeMin, tm[5], tm[6], tm[7]))
+        except:
+            expectedTime = time.mktime((tm[0], tm[1], tm[2], self.wakingTime[0],
+                                        self.wakingTime[1] - self.actionPreponeTimeMin, tm[5], tm[6], tm[7], 0))
         if self.verbose:
             print("waking at ", end="")
             print(time.localtime(expectedTime), end=" ")
