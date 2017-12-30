@@ -95,20 +95,22 @@ class Alarm:
         """drop in infinite loop to spin alarm"""
         count = 0
         while True:
-            self.read_alarmtime()
-
-            if self.start():
-                if self.verbose:
-                    print("starting waking action")
-                self.action.process()
-
-            # try:
-            #     machine.idle()
-            # except:
-            time.sleep(self.sleepTimeSec)
-
-            # set ntptime every tenth loop
-            if count > 10:
-                count=0
-                self.timeSetter.process()
+            self.spin_once(count == 10)
             count += 1
+
+    def spin_once(self, setNtpTime=False):
+        self.read_alarmtime()
+
+        if self.start():
+            if self.verbose:
+                print("starting waking action")
+            self.action.process()
+
+        # try:
+        #     machine.idle()
+        # except:
+        time.sleep(self.sleepTimeSec)
+
+        # set ntptime
+        if setNtpTime:
+            self.timeSetter.process()
