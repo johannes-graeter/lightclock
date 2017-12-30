@@ -58,19 +58,19 @@ class Sunrise(object):
         # run sunrise
         dt = 0.
         while self.sunriseTimeSec - dt > 0.:
+            # set new dt
+            dt = time.time() - beginTime
+
             # process one step
-            self.process_once(beginTime)
+            self.process_once(dt)
 
             # delay a bit
             time.sleep_ms(self.delayMs)
 
-    def process_once(self, beginTime):
+    def process_once(self, dt):
         # print("start sunrise")
         # select led
         led = machine.PWM(machine.Pin(self.ledNum, machine.Pin.OUT), freq=20000)
-
-        # set new dt
-        dt = time.time() - beginTime
 
         # intensity from profile ->strategy pattern
         intensity = int(self.intensityProfile(dt))

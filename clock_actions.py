@@ -18,9 +18,9 @@ class StringPrinter:
     def process(self):
         print(self.s)
 
-    def process_once(self, beginTime):
+    def process_once(self, dt):
         print(self.s)
-        print("start time=", beginTime)
+        print("time difference=", dt)
 
 
 

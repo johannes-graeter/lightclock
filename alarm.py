@@ -74,27 +74,30 @@ class Alarm:
         # split it and convert to int (first to float since seconds can be a float in datetime format)
         self.wakingTime = tuple([int(float(x)) for x in a.strip().split(":")])
 
-    def start(self):
-        """test if current time is waking time - preponeTime"""
-
-        # get current time
-        tm = time.localtime()
-
+    def get_expected_time(self, tm):
+        """ get time that was read from file corresponding to current year including prepone time"""
         # get expected start time
         try:
             expectedTime = time.mktime((tm[0], tm[1], tm[2], self.wakingTime[0],
-                                    self.wakingTime[1] - self.actionPreponeTimeMin, tm[5], tm[6], tm[7]))
+                                        self.wakingTime[1] - self.actionPreponeTimeMin, 0, tm[6], tm[7]))
         except:
             expectedTime = time.mktime((tm[0], tm[1], tm[2], self.wakingTime[0],
-                                        self.wakingTime[1] - self.actionPreponeTimeMin, tm[5], tm[6], tm[7], 0))
+                                        self.wakingTime[1] - self.actionPreponeTimeMin, 0, tm[6], tm[7], 0))
         if self.verbose:
             print("waking at ", end="")
             print(time.localtime(expectedTime), end=" ")
             print("current time is ", end="")
             print(tm)
 
+        return expectedTime
+
+    def start(self):
+        """test if current time is waking time - preponeTime"""
+        # get current time
+        tm = time.localtime()
+
         # convert time to seconds, if the time diff is between negative threshold and zero start
-        timeDiffSec = expectedTime - time.mktime(tm)
+        timeDiffSec = self.get_expected_time(tm) - time.mktime(tm)
 
         return -300. <= timeDiffSec <= 0.
 
@@ -106,19 +109,18 @@ class Alarm:
             count += 1
 
     def spin_once(self, setNtpTime=False):
+        # read alarmtime, is saved on class
         self.read_alarmtime()
 
-        dt = time.time() - self.lastStartTime
+        # get start time corresponding to alarmtime
+        startTime = self.get_expected_time(time.localtime())
+        # current time diff
+        dt = time.time() - startTime
 
-        # set start if wasn't set before
-        if self.start() and dt > self.action.sunriseTimeSec:
-            self.lastStartTime = time.time()
-            if self.verbose:
-                print("starting waking action")
-
-        # adjust light or sleep and get ntp time
-        if dt < self.action.sunriseTimeSec:
-            self.action.process_once(self.lastStartTime)
+        # if the time difference is smaller sunrise time, this means we should adjust the light corresponding to dt
+        # otherwise we sleep and get ntp time
+        if 0. < dt < self.action.sunriseTimeSec:
+            self.action.process_once(dt)
         else:
             time.sleep(self.sleepTimeSec)
             # set ntptime
