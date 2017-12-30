@@ -12,9 +12,15 @@ class StringPrinter:
 
     def __init__(self, s):
         self.s = s
+        # rise time
+        self.sunriseTimeSec = 60. * 30.
 
     def process(self):
         print(self.s)
+
+    def process_once(self, beginTime):
+        print(self.s)
+        print("start time=", beginTime)
 
 
 

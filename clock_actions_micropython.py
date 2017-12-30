@@ -52,30 +52,34 @@ class Sunrise(object):
         self.ledNum = num
 
     def process(self):
-        # print("start sunrise")
-        # select led
-        led = machine.PWM(machine.Pin(self.ledNum, machine.Pin.OUT), freq=20000)
-
         # save time at beginning
         beginTime = time.time()
 
         # run sunrise
         dt = 0.
         while self.sunriseTimeSec - dt > 0.:
-            # intensity from profile ->strategy pattern
-            intensity = int(self.intensityProfile(dt))
-            # get valid range of intensity
-            intensity = max(intensity, 0)
-            intensity = min(intensity, self.maxIntensityPercent)
-
-            # set intensity with bandwidth modulation pulsing, max duty val is 1023, led for pin 0 is on when pin.value()==0
-            led.duty(int(intensity*1023/100))
+            # process one step
+            self.process_once(beginTime)
 
             # delay a bit
             time.sleep_ms(self.delayMs)
 
-            # set new dt
-            dt = time.time() - beginTime
+    def process_once(self, beginTime):
+        # print("start sunrise")
+        # select led
+        led = machine.PWM(machine.Pin(self.ledNum, machine.Pin.OUT), freq=20000)
+
+        # set new dt
+        dt = time.time() - beginTime
+
+        # intensity from profile ->strategy pattern
+        intensity = int(self.intensityProfile(dt))
+        # get valid range of intensity
+        intensity = max(intensity, 0)
+        intensity = min(intensity, self.maxIntensityPercent)
+
+        # set intensity with bandwidth modulation pulsing, max duty val is 1023, led for pin 0 is on when pin.value()==0
+        led.duty(int(intensity*1023/100))
 
 
 class SunriseExp(Sunrise):

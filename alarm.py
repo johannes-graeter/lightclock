@@ -50,6 +50,9 @@ class Alarm:
         # set the ntp time
         self.timeSetter.process()
 
+        # this is the last start time in seconds, has to be saved for spin_once
+        self.lastStartTime = 0.
+
     def set_verbosity(self, verbose):
         self.verbose = verbose
         print("set verbosity to ", self.verbose)
@@ -105,16 +108,19 @@ class Alarm:
     def spin_once(self, setNtpTime=False):
         self.read_alarmtime()
 
-        if self.start():
+        dt = time.time() - self.lastStartTime
+
+        # set start if wasn't set before
+        if self.start() and dt > self.action.sunriseTimeSec:
+            self.lastStartTime = time.time()
             if self.verbose:
                 print("starting waking action")
-            self.action.process()
 
-        # try:
-        #     machine.idle()
-        # except:
-        time.sleep(self.sleepTimeSec)
-
-        # set ntptime
-        if setNtpTime:
-            self.timeSetter.process()
+        # adjust light or sleep and get ntp time
+        if dt < self.action.sunriseTimeSec:
+            self.action.process_once(self.lastStartTime)
+        else:
+            time.sleep(self.sleepTimeSec)
+            # set ntptime
+            if setNtpTime:
+                self.timeSetter.process()
