@@ -4,6 +4,13 @@ from alarm import Alarm
 from clock_actions import *
 
 
+class TimeSetterDummy:
+    def __init__(self):
+        pass
+    def process(self):
+        print("TimeSetterDummy::process called")
+
+
 def main():
     # this main is for testing on a normal ubuntu system
 
@@ -14,7 +21,7 @@ def main():
 
     # get configs
     maxIntensity = 100
-    sleepTimeSec = 60.
+    sleepTimeSec = 2.
 
     config = {}
     try:
@@ -37,10 +44,13 @@ def main():
     s = StringPrinter("rise sun!")
 
     # set alarm
-    alarm = Alarm(s)
+    alarm = Alarm(s, TimeSetterDummy())
+    alarm.set_verbosity(True)
     alarm.set_sleep_time_spinning_sec(sleepTimeSec)
 
     alarm.spin()
+
+    print("done")
 
 
 if __name__ == '__main__':
