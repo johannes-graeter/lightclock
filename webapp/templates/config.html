@@ -13,14 +13,27 @@
 </header>
 <body>
   <div class="container">
-    <form class="form-horizontal form-config" action="/"  method="post">
+    <form class="form-horizontal form-config" action="/" method="post">
       <h2 class="form-config-heading">Lightclock settings</h2>
       {% for param in params %}
       {% if 'html_type' in param %}
       <div class="form-group">
-          <label for="{{ param['name'] }}" class="col-sm-8 control-label">{{ param['name'] }}</label>
+          <label for="{{ param['name'] }}" class="col-sm-8 control-label">
+              {% if 'description' in param %}
+                {{ param['description'] }}
+              {% else %}
+                {{ param['name'] }}
+              {% endif %}
+          </label>
           <div class="col-sm-4">
-              <input type="time" class="form-control" id="{{ param['name'] }}" placeholder="{{ param['value'] }}">
+              <input type="{{ param['html_type'] }}" class="form-control" id="{{ param['name'] }}"
+                     {% if 'min' in param %}
+                        min="{{ param['min'] }}"
+                     {% endif %}
+                     {% if 'max' in param %}
+                        max="{{ param['max'] }}"
+                     {% endif %}
+                     placeholder="{{ param['value'] }}">
           </div>
       </div>
       {% endif %}
