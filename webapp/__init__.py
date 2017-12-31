@@ -12,13 +12,25 @@ def homepage(request, response):
     gc.collect()
     print(gc.mem_free())
 
-    if request.method == 'POST':
-        # TODO save config to json
-        print(request)
-
     # Load config from json
     import ujson
     config = ujson.load(open("../config.json", "r"))
+
+    # Save new config to json if given
+    if request.method == 'POST':
+        yield from request.read_form_data()
+
+        config_changed = False
+        for param in config:
+            # Read configurable parameters, given per POST, that are not empty
+            if 'html_type' in param and request.form.get(param['name']) and request.form[param['name']][0]:
+                param['value'] = request.form[param['name']][0]
+                config_changed = True
+
+        if config_changed:
+            config_file = open("config.json", "w")
+            config_file.write(ujson.dumps(config))
+            config_file.close()
 
     print(gc.mem_free())
 
