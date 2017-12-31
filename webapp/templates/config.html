@@ -1,0 +1,36 @@
+{% args params %}
+<!DOCTYPE html>
+<html lang="en">
+<header>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Lightclock configuration App</title>
+
+    <link href="bootstrap.min.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+</header>
+<body>
+  <div class="container">
+    <form class="form-horizontal form-config" action="/"  method="post">
+      <h2 class="form-config-heading">Lightclock settings</h2>
+      {% for param in params %}
+      {% if 'html_type' in param %}
+      <div class="form-group">
+          <label for="{{ param['name'] }}" class="col-sm-8 control-label">{{ param['name'] }}</label>
+          <div class="col-sm-4">
+              <input type="time" class="form-control" id="{{ param['name'] }}" placeholder="{{ param['value'] }}">
+          </div>
+      </div>
+      {% endif %}
+      {% endfor %}
+      <div class="form-group form-config-submit">
+        <div class="col-sm-offset-2 col-sm-10">
+          <button type="submit" class="btn btn-lg btn-primary btn-block">Save</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

@@ -1,0 +1,18 @@
+body {
+  /*! padding-top: 40px; */
+  /*! padding-bottom: 40px; */
+  background-color: #eee;
+}
+
+.form-config {
+    max-width: 330px;
+    padding: 15px;
+    margin: 0 auto;
+}
+.form-config .form-config-heading {
+  margin-bottom: 25px;
+  text-align: center;
+}
+.form-config .form-config-submit {
+  margin-top: 20px;
+}
