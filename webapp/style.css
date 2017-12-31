@@ -14,5 +14,6 @@ body {
   text-align: center;
 }
 .form-config .form-config-submit {
-  margin-top: 20px;
+  margin: 20px auto;
+  width: 80%;
 }
