@@ -63,9 +63,10 @@ def styles(request, response):
         import os
         if file_path_gzip in os.listdir("webapp"):
             print("sending " + file_path_gzip)
-            yield from app.sendfile(response, file_path_gzip, b"text/css", b"Content-Encoding: gzip")
+            yield from app.sendfile(response, file_path_gzip, b"text/css", b"Content-Encoding: gzip\r\n"
+                                                                           b"Cache-Control: max-age=86400")
             return
 
-    yield from app.sendfile(response, file_path, b"text/css")
+    yield from app.sendfile(response, file_path, b"text/css", b"Cache-Control: max-age=86400")
 
 app.run(host="192.168.0.19", debug=True)
