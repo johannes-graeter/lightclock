@@ -36,9 +36,15 @@ As online template rendering using `utemplate.source` is too memory expensive fo
 2. Compile config.html to config_html.py:  
     `python3 <path_to_utemplate>/utemplate_util.py "rawcompile" webapp/templates/config.html`
 
-### 3. Copy Webapp files to board
+### 3. Compress big static files
 
-Copy the webapp files (including the compiled template) to your MicroPython board into the webapp folder, eg.:
+We gzip `bootstrap.min.css` such that the Webapp can provide the compressed version and reduce loading time from 6-8s to 1.6-1.7s:
+
+    gzip -c --best webapp/bootstrap.min.css > webapp/bootstrap.min.css.gz
+
+### 4. Copy Webapp files to board
+
+Copy the webapp files (including the compiled template and compressed stylesheet) to your MicroPython board into the webapp folder, eg.:
 
     ampy put webapp
 

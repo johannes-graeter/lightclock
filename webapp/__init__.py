@@ -52,23 +52,20 @@ def homepage(request, response):
     print(gc.mem_free())
 
 
+# Use gzip content encoding for speedup, if an encoded file is available
 @app.route(re.compile('^\/(.+\.css)$'), methods=['GET'])
 def styles(request, response):
-    yield from app.sendfile(response, request.url_match.group(1), 'text/css')
+    file_path = request.url_match.group(1)
 
+    if b"gzip" in request.headers[b"Accept-Encoding"]:
+        print("client accepts gzip")
+        file_path_gzip = file_path + ".gz"
+        import os
+        if file_path_gzip in os.listdir("webapp"):
+            print("sending " + file_path_gzip)
+            yield from app.sendfile(response, file_path_gzip, b"text/css", b"Content-Encoding: gzip")
+            return
 
-# TODO use gzip content encoding for speedup, if an encoded file is available (see picoweb#25)
-# @app.route(re.compile('^\/(.+\.css)$'), methods=['GET'])
-# def styles(request, response):
-#     file_path = request.url_match.group(1)
-#
-#     if b"gzip" in request.headers[b"Accept-Encoding"]:
-#         file_path_gzip = file_path + ".gz"
-#         import os
-#         if file_path_gzip in os.listdir("/"):
-#             yield from app.sendfile(response, file_path_gzip, 'text/css', 'gzip')
-#             return
-#
-#     yield from app.sendfile(response, file_path, 'text/css')
+    yield from app.sendfile(response, file_path, b"text/css")
 
 app.run(host="192.168.0.19", debug=True)
