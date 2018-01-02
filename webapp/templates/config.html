@@ -29,7 +29,7 @@
             </label>
 
             {% if param['html_type']=='time' %}
-              <div class="clockpicker col-sm-4" data-autoclose="true">
+              <div class="clockpicker col-sm-4" data-autoclose="true" data-default="{{ param['value'] }}">
                 <input type="text" class="form-control" name="{{ param['name'] }}" id="{{ param['name'] }}" placeholder="{{ param['value'] }}">
               </div>
             {% else %}
