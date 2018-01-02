@@ -36,11 +36,17 @@ As online template rendering using `utemplate.source` is too memory expensive fo
 2. Compile config.html to config_html.py:  
     `python3 <path_to_utemplate>/utemplate_util.py "rawcompile" webapp/templates/config.html`
 
-### 3. Compress big static files
+### 3. Minimize file size
 
 We gzip `bootstrap.min.css` such that the Webapp can provide the compressed version and reduce loading time from 6-8s to 1.6-1.7s:
 
     gzip -c --best webapp/bootstrap.min.css > webapp/bootstrap.min.css.gz
+
+We can also strip trailing whitespace and linebreaks from the dynamic HTML page reducing file size by ~40%
+
+    sed -e "s/^[[:space:]]*//g" webapp/templates/config.html | tr -d '\n' > webapp/templates/config.html.min
+    python3 <path_to_utemplate>/utemplate_util.py "rawcompile" webapp/templates/config.html.min
+    mv webapp/templates/config_html_min.py webapp/templates/config_html.py
 
 ### 4. Copy Webapp files to board
 
