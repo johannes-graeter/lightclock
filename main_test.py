@@ -19,34 +19,17 @@ def main():
 
     # get current time from wifi
 
-    # get configs
-    maxIntensity = 100
-    sleepTimeSec = 2.
-
-    config = {}
-    try:
-        config = json.load(open(pathToConfigs, "r"))
-    except:
-        print("blink onboard LED")
-
-    try:
-        maxIntensity = config["max_intensity_percent"]
-        sleepTimeSec = config["alarm_sleep_time_sec"]
-    except:
-        print("blink twice")
-
-    print("maxIntensityPercent " + str(maxIntensity))
-    print("sleepTimeSec " + str(sleepTimeSec))
+    config = json.load(open(pathToConfigs, "r"))
 
     # create instance of sunrise which will be launched by alarm at the correct time
     # read maximum intensity
 
     s = StringPrinter("rise sun!")
+    s.set_config(config)
 
     # set alarm
     alarm = Alarm(s, TimeSetterDummy())
-    alarm.set_verbosity(True)
-    alarm.set_sleep_time_spinning_sec(sleepTimeSec)
+    alarm.set_config(config)
 
     alarm.spin()
 

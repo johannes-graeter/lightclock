@@ -36,6 +36,22 @@ class Sunrise(object):
         # led delay in millisec
         self.delayMs = 1
 
+    def set_config(self, config_file):
+        """
+        :param config_file: json file with config params
+        :return:
+        """
+        func_mapping = {
+            'max_intensity_percent': self.set_max_intensity_percent,
+            'sunrise_time_sec': self.set_sunrise_time,
+            'led_number': self.set_led_num
+        }
+
+        # apply functions that are both in config_file and func_mapping
+        for param in config_file:
+            if param['name'] in func_mapping:
+                func_mapping[param['name']](param['value'])
+
     def set_max_intensity_percent(self, maxIntensityPerc):
         self.maxIntensityPercent = min(int(maxIntensityPerc), 100)
 

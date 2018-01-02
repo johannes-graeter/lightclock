@@ -50,8 +50,20 @@ class Alarm:
         # set the ntp time
         self.timeSetter.process()
 
-        # this is the last start time in seconds, has to be saved for spin_once
-        self.lastStartTime = 0.
+    def set_config(self, config_file):
+        """
+        :param config_file: json file with config params
+        :return:
+        """
+        func_mapping={
+            'alarm_sleep_time_sec': self.set_sleep_time_spinning_sec,
+            'verbose': self.set_verbosity
+        }
+
+        # apply functions that are both in config_file and func_mapping
+        for param in config_file:
+            if param['name'] in func_mapping:
+                func_mapping[param['name']](param['value'])
 
     def set_verbosity(self, verbose):
         self.verbose = verbose

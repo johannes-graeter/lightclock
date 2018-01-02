@@ -13,8 +13,26 @@ class TimeSetter:
     """
 
     def __init__(self, utcDelay):
-        self.utcDelay=utcDelay
+        self.utcDelay = utcDelay
         self.verbose = False
+
+    def set_config(self, config_file):
+        """
+        :param config_file: json file with config params
+        :return:
+        """
+        func_mapping = {
+            'verbose': self.set_verbose,
+            'sunrise_time_sec': self.set_utc_delay
+        }
+
+        # apply functions that are both in config_file and func_mapping
+        for param in config_file:
+            if param['name'] in func_mapping:
+                func_mapping[param['name']](param['value'])
+
+    def set_utc_delay(self, utcDelay):
+        self.utcDelay = utcDelay
 
     def set_verbose(self, verbose):
         self.verbose = verbose
