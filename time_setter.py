@@ -12,8 +12,8 @@ class TimeSetter:
             utc_delay (int): time delay from utc (for Berlin: +1)
     """
 
-    def __init__(self, utcDelay):
-        self.utcDelay = utcDelay
+    def __init__(self):
+        self.utcDelay = 1
         self.verbose = False
 
     def set_config(self, config_file):
@@ -23,7 +23,7 @@ class TimeSetter:
         """
         func_mapping = {
             'verbose': self.set_verbose,
-            'sunrise_time_sec': self.set_utc_delay
+            'set_utc_delay': self.set_utc_delay
         }
 
         # apply functions that are both in config_file and func_mapping

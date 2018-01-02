@@ -18,7 +18,6 @@ def main():
     pathToConfigs = "./config.json"
 
     # get current time from wifi
-
     config = json.load(open(pathToConfigs, "r"))
 
     # create instance of sunrise which will be launched by alarm at the correct time
