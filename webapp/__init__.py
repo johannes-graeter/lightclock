@@ -54,7 +54,7 @@ def homepage(request, response):
 
 @app.route(re.compile('^\/(.+\.css|.+\.js)$'), methods=['GET'])
 def styles(request, response):
-    yield from app.sendfile(response, request.url_match.group(1), 'text/css')
+    yield from app.sendfile(response, request.url_match.group(1))
 
 
 # TODO use gzip content encoding for speedup, if an encoded file is available (see picoweb#25)
@@ -71,4 +71,5 @@ def styles(request, response):
 #
 #     yield from app.sendfile(response, file_path, 'text/css')
 
-app.run(host="192.168.0.19", debug=True)
+app.run(host="192.168.1.25", debug=True)
+#app.run(host="192.168.4.1", debug=True) # AP_IF
