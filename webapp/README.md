@@ -41,6 +41,7 @@ As online template rendering using `utemplate.source` is too memory expensive fo
 We gzip `bootstrap.min.css` such that the Webapp can provide the compressed version and reduce loading time from 6-8s to 1.6-1.7s:
 
     gzip -c --best webapp/bootstrap.min.css > webapp/bootstrap.min.css.gz
+    gzip -c --best webapp/style.css > webapp/style.css.gz
 
 We can also strip trailing whitespace and linebreaks from the dynamic HTML page reducing file size by ~40%
 
