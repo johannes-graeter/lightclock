@@ -52,7 +52,7 @@ def homepage(request, response):
     print(gc.mem_free())
 
 
-@app.route(re.compile('^\/(.+\.css)$'), methods=['GET'])
+@app.route(re.compile('^\/(.+\.css|.+\.js)$'), methods=['GET'])
 def styles(request, response):
     yield from app.sendfile(response, request.url_match.group(1), 'text/css')
 
