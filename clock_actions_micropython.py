@@ -1,4 +1,5 @@
 import math
+from with_config import WithConfig
 
 try:
     import machine
@@ -7,7 +8,7 @@ except:
     print("using ubuntu testing version")
 
 
-class Sunrise(object):
+class Sunrise(WithConfig):
     """interface class to do a sunrise with specified intensity profile
         Args:
 
@@ -21,6 +22,14 @@ class Sunrise(object):
     """
 
     def __init__(self):
+        # init config setter
+        func_mapping = {
+            'max_intensity_percent': self.set_max_intensity_percent,
+            'sunrise_time_sec': self.set_sunrise_time,
+            'led_number': self.set_led_num
+        }
+        super().__init__(func_mapping)
+
         # max intensity
         self.maxIntensityPercent = 100
 
@@ -35,22 +44,6 @@ class Sunrise(object):
 
         # led delay in millisec
         self.delayMs = 1
-
-    def set_config(self, config_file):
-        """
-        :param config_file: json file with config params
-        :return:
-        """
-        func_mapping = {
-            'max_intensity_percent': self.set_max_intensity_percent,
-            'sunrise_time_sec': self.set_sunrise_time,
-            'led_number': self.set_led_num
-        }
-
-        # apply functions that are both in config_file and func_mapping
-        for param in config_file:
-            if param['name'] in func_mapping:
-                func_mapping[param['name']](param['value'])
 
     def set_max_intensity_percent(self, maxIntensityPerc):
         self.maxIntensityPercent = min(int(maxIntensityPerc), 100)
@@ -95,7 +88,7 @@ class Sunrise(object):
         intensity = min(intensity, self.maxIntensityPercent)
 
         # set intensity with bandwidth modulation pulsing, max duty val is 1023, led for pin 0 is on when pin.value()==0
-        led.duty(int(intensity*1023/100))
+        led.duty(int(intensity * 1023 / 100))
 
 
 class SunriseExp(Sunrise):

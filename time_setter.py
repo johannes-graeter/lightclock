@@ -1,9 +1,10 @@
 import ntptime
 import machine
 import utime as time
+from with_config import WithConfig
 
 
-class TimeSetter:
+class TimeSetter(WithConfig):
     """class to reset time
        Args:
            utc_delay: delay in hours form utc timezone
@@ -13,6 +14,14 @@ class TimeSetter:
     """
 
     def __init__(self):
+        # init config setter
+        func_mapping = {
+            'verbose': self.set_verbose,
+            'set_utc_delay': self.set_utc_delay
+        }
+        super().__init__(func_mapping)
+
+        # attribute defaults
         self.utcDelay = 1
         self.verbose = False
 
@@ -21,10 +30,6 @@ class TimeSetter:
         :param config_file: json file with config params
         :return:
         """
-        func_mapping = {
-            'verbose': self.set_verbose,
-            'set_utc_delay': self.set_utc_delay
-        }
 
         # apply functions that are both in config_file and func_mapping
         for param in config_file:

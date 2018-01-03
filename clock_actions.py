@@ -1,4 +1,7 @@
-class StringPrinter:
+from with_config import WithConfig
+
+
+class StringPrinter(WithConfig):
     """
     Dummy action for testing which prints the string given
 
@@ -11,25 +14,16 @@ class StringPrinter:
     """
 
     def __init__(self, s):
-        self.s = s
-        # rise time
-        self.sunriseTimeSec = 60. * 30.
-
-    def set_config(self, config_file):
-        """
-        :param config_file: json file with config params
-        :return:
-        """
         func_mapping = {
             'max_intensity_percent': self.set_max_intensity_percent,
             'sunrise_time_sec': self.set_sunrise_time,
             'led_number': self.set_led_num
         }
+        super().__init__(func_mapping)
 
-        # apply functions that are both in config_file and func_mapping
-        for param in config_file:
-            if param['name'] in func_mapping:
-                func_mapping[param['name']](param['value'])
+        self.s = s
+        # rise time
+        self.sunriseTimeSec = 60. * 30.
 
     def set_led_num(self, num):
         print('set led num {}'.format(num))
@@ -46,6 +40,3 @@ class StringPrinter:
     def process_once(self, dt):
         print(self.s)
         print("time difference=", dt)
-
-
-

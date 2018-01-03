@@ -3,12 +3,15 @@ try:
 except:
     import time
 
+from with_config import WithConfig
+
+
 # try:
 #     import machine
 # except:
 #     pass
 
-class Alarm:
+class Alarm(WithConfig):
     """class that triggers an action at a given time
 
         Args:
@@ -24,6 +27,13 @@ class Alarm:
     """
 
     def __init__(self, action, timeSetter):
+        # init config setter
+        func_mapping = {
+            'alarm_sleep_time_sec': self.set_sleep_time_spinning_sec,
+            'verbose': self.set_verbosity
+        }
+        super().__init__(func_mapping)
+
         # inputs
         # action to trigger
         self.action = action
@@ -49,21 +59,6 @@ class Alarm:
 
         # set the ntp time
         self.timeSetter.process()
-
-    def set_config(self, config_file):
-        """
-        :param config_file: json file with config params
-        :return:
-        """
-        func_mapping={
-            'alarm_sleep_time_sec': self.set_sleep_time_spinning_sec,
-            'verbose': self.set_verbosity
-        }
-
-        # apply functions that are both in config_file and func_mapping
-        for param in config_file:
-            if param['name'] in func_mapping:
-                func_mapping[param['name']](param['value'])
 
     def set_verbosity(self, verbose):
         self.verbose = verbose
