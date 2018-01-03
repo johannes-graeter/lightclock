@@ -30,15 +30,8 @@ except:
     blink_led(0)
     time.sleep(500)
 
-# ledNum = 15 # use pin without LED branched to it
-# do one sunrise to show you are there
-s_startup = SunriseExp()
-# try it on 0 pin because it has an led
-s_startup.set_config(config)
-s_startup.set_exp_vars(100., 1.5)
-s_startup.process()
-# print("end of sunrise")
-
+# turn on the led to show you are there
+machine.PWM(machine.Pin(0, machine.Pin.OUT), freq=20000).duty(1)
 # turn off the led (why doesn't simply putting low() suffice?
 machine.PWM(machine.Pin(0, machine.Pin.OUT), freq=20000).duty(1024)
 
