@@ -32,6 +32,8 @@ except:
 
 # turn on the led to show you are there
 machine.PWM(machine.Pin(0, machine.Pin.OUT), freq=20000).duty(1)
+time.sleep_ms(1000)
+
 # turn off the led (why doesn't simply putting low() suffice?
 machine.PWM(machine.Pin(0, machine.Pin.OUT), freq=20000).duty(1024)
 
