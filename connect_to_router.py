@@ -23,10 +23,12 @@ def do_connect(configName):
             print("-", end="")
             machine.idle()
 
-    # assign static ip from config
-    if "static_ip" in config:
-        lst_current_config = list(sta_if.ifconfig())
-        lst_current_config[0] = config["static_ip"]
-        sta_if.ifconfig(tuple(lst_current_config))
+        # assign static ip from config
+        if "static_ip" in config:
+            lst_current_config = list(sta_if.ifconfig())
+            lst_current_config[0] = config["static_ip"]
+            sta_if.ifconfig(tuple(lst_current_config))
+
+    # TODO assign static ip if already connected, but different from config?
 
     print('network config:', sta_if.ifconfig())
