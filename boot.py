@@ -13,4 +13,4 @@ gc.collect()
 do_connect("./config_wifi.json")
 
 gc.collect()
-gc.mem_free()
+print("memory usage=",gc.mem_free())

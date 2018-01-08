@@ -28,7 +28,7 @@ class Sunrise(WithConfig):
             'sunrise_time_sec': self.set_sunrise_time,
             'led_number': self.set_led_num
         }
-        super().__init__(func_mapping)
+        super(Sunrise, self).__init__(func_mapping)
 
         # max intensity
         self.maxIntensityPercent = 100
@@ -44,6 +44,7 @@ class Sunrise(WithConfig):
 
         # led delay in millisec
         self.delayMs = 1
+
 
     def set_max_intensity_percent(self, maxIntensityPerc):
         self.maxIntensityPercent = min(int(maxIntensityPerc), 100)

@@ -1,5 +1,6 @@
 try:
     import utime as time
+    import gc
 except:
     import time
 
@@ -32,7 +33,7 @@ class Alarm(WithConfig):
             'alarm_sleep_time_sec': self.set_sleep_time_spinning_sec,
             'verbose': self.set_verbosity
         }
-        super().__init__(func_mapping)
+        super(Alarm, self).__init__(func_mapping)
 
         # inputs
         # action to trigger
@@ -113,6 +114,8 @@ class Alarm(WithConfig):
         count = 0
         while True:
             self.spin_once(count == 10)
+            gc.collect()
+            print("free=", gc.mem_free())
             count += 1
 
     def spin_once(self, setNtpTime=False):

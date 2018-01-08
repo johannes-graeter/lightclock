@@ -19,22 +19,11 @@ class TimeSetter(WithConfig):
             'verbose': self.set_verbose,
             'set_utc_delay': self.set_utc_delay
         }
-        super().__init__(func_mapping)
+        super(TimeSetter, self).__init__(func_mapping)
 
         # attribute defaults
         self.utcDelay = 1
         self.verbose = False
-
-    def set_config(self, config_file):
-        """
-        :param config_file: json file with config params
-        :return:
-        """
-
-        # apply functions that are both in config_file and func_mapping
-        for param in config_file:
-            if param['name'] in func_mapping:
-                func_mapping[param['name']](param['value'])
 
     def set_utc_delay(self, utcDelay):
         self.utcDelay = utcDelay

@@ -5,6 +5,7 @@ from clock_actions_micropython import *
 import machine
 import utime as time
 from time_setter import TimeSetter
+import gc
 
 
 def blink_led(pin_number):
@@ -53,4 +54,6 @@ alarm.set_config(config)
 # don't prepone for debugging
 alarm.set_action_prepone_time_min(0.)
 
+gc.collect()
+print("Memory usage=", gc.mem_free())
 alarm.spin()
