@@ -62,6 +62,7 @@ def spin_and_collect(t):
     alarm.spin_once()
     gc.collect()
 
+
 timers = [machine.Timer(0), machine.Timer(1)]
 timers[0].init(period=config['period_alarm_ms']['value'], mode=machine.Timer.PERIODIC, callback=spin_and_collect)
 
