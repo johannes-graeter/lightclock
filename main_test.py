@@ -7,6 +7,7 @@ from clock_actions import *
 class TimeSetterDummy:
     def __init__(self):
         pass
+
     def process(self):
         print("TimeSetterDummy::process called")
 
@@ -23,12 +24,10 @@ def main():
     # create instance of sunrise which will be launched by alarm at the correct time
     # read maximum intensity
 
-    s = StringPrinter("rise sun!")
-    s.set_config(config)
+    s = StringPrinter("rise sun!", config)
 
     # set alarm
-    alarm = Alarm(s, TimeSetterDummy())
-    alarm.set_config(config)
+    alarm = Alarm(s, TimeSetterDummy(), config)
 
     alarm.spin()
 

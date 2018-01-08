@@ -39,17 +39,14 @@ time.sleep_ms(1000)
 machine.PWM(machine.Pin(0, machine.Pin.OUT), freq=20000).duty(1024)
 
 # create instance of sunrise which will be launched by alarm at the correct time
-s = SunriseExp()
-s.set_config(config)
+s = SunriseExp(config)
 s.set_exp_vars(5., 3.5)
 
 # time zone manager
-timeSetter = TimeSetter()
-timeSetter.set_config(config)
+timeSetter = TimeSetter(config)
 
 # set alarm
-alarm = Alarm(s, timeSetter)
-alarm.set_config(config)
+alarm = Alarm(s, timeSetter, config)
 
 # don't prepone for debugging
 alarm.set_action_prepone_time_min(0.)

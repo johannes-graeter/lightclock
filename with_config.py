@@ -6,20 +6,9 @@ class WithConfig:
             func_mapping (dict): see args
     """
 
-    def __init__(self, func_mapping):
-        self.func_mapping = func_mapping
-
-    def set_config(self, config_file):
-        """
-        :param config_file: json file with config params
-        :return:
-        """
-        # func_mapping={
-        #     'alarm_sleep_time_sec': self.set_sleep_time_spinning_sec,
-        #     'verbose': self.set_verbosity
-        # }
-
-        # apply functions that are both in config_file and func_mapping
-        for param in config_file:
-            if param['name'] in self.func_mapping:
-                self.func_mapping[param['name']](param['value'])
+    def __init__(self, names, config):
+        # check if names are in config
+        for n in names:
+            if n not in config:
+                raise Exception("name "+n+" not defined in config")
+        self.config = config

@@ -27,24 +27,18 @@ class Alarm(WithConfig):
             timeSetter (...): object with function process, that sets ntp time on machine
     """
 
-    def __init__(self, action, timeSetter):
+    def __init__(self, action, timeSetter, config):
         # init config setter
-        func_mapping = {
-            'alarm_sleep_time_sec': self.set_sleep_time_spinning_sec,
-            'verbose': self.set_verbosity
-        }
-        super(Alarm, self).__init__(func_mapping)
+        config_attributes = [
+            'alarmtime',
+            'alarm_sleep_time_sec',
+            'verbose'
+        ]
+        super(Alarm, self).__init__(config_attributes, config)
 
         # inputs
         # action to trigger
         self.action = action
-
-        # defaults
-        # waking time in hour, minute, second
-        self.wakingTime = [13, 30, 00]
-
-        # sleep time while spinning
-        self.sleepTimeSec = 60.
 
         # time in minutes before action should start
         self.actionPreponeTimeMin = 30
@@ -52,18 +46,11 @@ class Alarm(WithConfig):
         # path to file which shall be read
         self.filename = "./alarmtime.json"
 
-        # print next waking time to cout
-        self.verbose = False
-
         # object that sets ntptime on controller
         self.timeSetter = timeSetter
 
         # set the ntp time
         self.timeSetter.process()
-
-    def set_verbosity(self, verbose):
-        self.verbose = verbose
-        print("set verbosity to ", self.verbose)
 
     def set_action_prepone_time_min(self, timeMin):
         self.actionPreponeTimeMin = int(timeMin)
@@ -74,24 +61,22 @@ class Alarm(WithConfig):
     def set_alarmtime_filename(self, filename):
         self.filename = filename
 
-    def read_alarmtime(self):
-        """read alarmtime from file"""
-        f = open(self.filename, "r")
-        a = f.readline()
-
+    def get_alarmtime(self):
+        """convert alarmtime (format hh:mm:ss, ss optional) into tuple of ints"""
         # split it and convert to int (first to float since seconds can be a float in datetime format)
-        self.wakingTime = tuple([int(float(x)) for x in a.strip().split(":")])
+        return tuple([int(float(x)) for x in self.config['alarmtime']['value'].strip().split(":")])
 
     def get_expected_time(self, tm):
         """ get time that was read from file corresponding to current year including prepone time"""
         # get expected start time
+        wakingTime = self.get_alarmtime()
         try:
-            expectedTime = time.mktime((tm[0], tm[1], tm[2], self.wakingTime[0],
-                                        self.wakingTime[1] - self.actionPreponeTimeMin, 0, tm[6], tm[7]))
+            expectedTime = time.mktime((tm[0], tm[1], tm[2], wakingTime[0],
+                                        wakingTime[1] - self.actionPreponeTimeMin, 0, tm[6], tm[7]))
         except:
-            expectedTime = time.mktime((tm[0], tm[1], tm[2], self.wakingTime[0],
-                                        self.wakingTime[1] - self.actionPreponeTimeMin, 0, tm[6], tm[7], 0))
-        if self.verbose:
+            expectedTime = time.mktime((tm[0], tm[1], tm[2], wakingTime[0],
+                                        wakingTime[1] - self.actionPreponeTimeMin, 0, tm[6], tm[7], 0))
+        if self.config['verbose']['value']:
             print("waking at ", end="")
             print(time.localtime(expectedTime), end=" ")
             print("current time is ", end="")
@@ -119,9 +104,6 @@ class Alarm(WithConfig):
             count += 1
 
     def spin_once(self, setNtpTime=False):
-        # read alarmtime, is saved on class
-        self.read_alarmtime()
-
         # get start time corresponding to alarmtime
         startTime = self.get_expected_time(time.localtime())
         # current time diff
@@ -132,7 +114,7 @@ class Alarm(WithConfig):
         if 0. < dt < self.action.sunriseTimeSec:
             self.action.process_once(dt)
         else:
-            time.sleep(self.sleepTimeSec)
+            time.sleep(self.config['alarm_sleep_time_sec']['value'])
             # set ntptime
             if setNtpTime:
                 self.timeSetter.process()
