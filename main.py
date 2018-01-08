@@ -69,3 +69,6 @@ tim.init(period=config['period_alarm_ms']['value'], mode=machine.Timer.PERIODIC,
 # set ntptime
 tim.init(period=config['period_get_ntp_time_ms']['value'], mode=machine.Timer.PERIODIC,
          callback=lambda t: timeSetter.process())
+
+while True:
+    pass
