@@ -1,5 +1,5 @@
-
 [
+    {"name": "alarmtime", "html_type": "time", "value": "19:58"},
     {"name": "alarm_sleep_time_sec", "html_type": "number", "min": 0, "max": 999999, "value": 1.0},
     {"name": "max_intensity_percent", "html_type": "number", "description": "Maximum light intensity [%]", "min": 0, "max": 100, "value": 97},
     {"name": "sunrise_time_sec", "html_type": "number", "description": "Time of sunrise period [s]", "min": 0, "max": 999999, "value": 1200},
