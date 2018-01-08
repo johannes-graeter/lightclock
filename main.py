@@ -7,6 +7,8 @@ import utime as time
 from time_setter import TimeSetter
 import gc
 
+gc.collect()
+
 
 def blink_led(pin_number):
     machine.Pin(pin_number, machine.Pin.OUT).low()
