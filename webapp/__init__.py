@@ -5,7 +5,10 @@ import ure as re
 
 class WebApp():
 
-    def __init__(self):
+    def __init__(self, host, debug=True):
+        self.debug = debug
+        self.host = host
+
         ROUTES = [
             ("/", self.homepage),
             (re.compile('^\/(.+\.css|.+\.js)$'), self.styles)
@@ -91,5 +94,5 @@ class WebApp():
     #     yield from self.app.sendfile(response, file_path, 'text/css')
 
     def run(self):
-        self.app.run(host="192.168.0.27", debug=True)
+        self.app.run(host=self.host, debug=self.debug)
         #self.app.run(host="192.168.4.1", debug=True) # AP_IF
