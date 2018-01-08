@@ -1,10 +1,10 @@
 import ujson as json
 
-from alarm import Alarm
-from clock_actions_micropython import *
+from alarmclock import alarm as a
+from alarmclock import clock_actions_micropython as ca
 import machine
 import utime as time
-from time_setter import TimeSetter
+from alarmclock import time_setter as ts
 import gc
 
 
@@ -39,14 +39,14 @@ time.sleep_ms(1000)
 machine.PWM(machine.Pin(0, machine.Pin.OUT), freq=20000).duty(1024)
 
 # create instance of sunrise which will be launched by alarm at the correct time
-s = SunriseExp(config)
+s = ca.SunriseExp(config)
 s.set_exp_vars(5., 3.5)
 
 # time zone manager
-timeSetter = TimeSetter(config)
+timeSetter = ts.TimeSetter(config)
 
 # set alarm
-alarm = Alarm(s, config)
+alarm = a.Alarm(s, config)
 
 # don't prepone for debugging
 alarm.set_action_prepone_time_min(0.)
