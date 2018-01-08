@@ -57,18 +57,22 @@ print("Memory usage=", gc.mem_free())
 # set ntp-time
 timeSetter.process()
 
-tim = machine.Timer(-1)
 
-
-def spin_and_collect():
+def spin_and_collect(t):
     alarm.spin_once()
     gc.collect()
 
-tim.init(period=config['period_alarm_ms']['value'], mode=machine.Timer.PERIODIC, callback=spin_and_collect)
+timers = [machine.Timer(0), machine.Timer(1)]
+timers[0].init(period=config['period_alarm_ms']['value'], mode=machine.Timer.PERIODIC, callback=spin_and_collect)
 
 # set ntptime
-tim.init(period=config['period_get_ntp_time_ms']['value'], mode=machine.Timer.PERIODIC,
-         callback=lambda t: timeSetter.process())
+timers[1].init(period=config['period_get_ntp_time_ms']['value'], mode=machine.Timer.PERIODIC,
+               callback=lambda t: timeSetter.process())
 
-while True:
-    pass
+try:
+    while True:
+        pass
+except KeyboardInterrupt:
+    print("ctrl+c pressed, quitting")
+    for tim in timers:
+        tim.deinit()
