@@ -24,14 +24,12 @@ class Alarm(WithConfig):
             sleepTimeSec (int): time in seconds to sleep after each loop while spinning
             actionPreponeTimeMin (int): time in minutes before wakingTime at which action will be triggered
             filename (str): path to file where the alarmtime is saved in the format "%02i:%02i:%02f"%(hour,minutes,seconds)
-            timeSetter (...): object with function process, that sets ntp time on machine
     """
 
-    def __init__(self, action, timeSetter, config):
+    def __init__(self, action, config):
         # init config setter
         config_attributes = [
             'alarmtime',
-            'alarm_sleep_time_sec',
             'verbose'
         ]
         super(Alarm, self).__init__(config_attributes, config)
@@ -45,12 +43,6 @@ class Alarm(WithConfig):
 
         # path to file which shall be read
         self.filename = "./alarmtime.json"
-
-        # object that sets ntptime on controller
-        self.timeSetter = timeSetter
-
-        # set the ntp time
-        self.timeSetter.process()
 
     def set_action_prepone_time_min(self, timeMin):
         self.actionPreponeTimeMin = int(timeMin)
@@ -94,16 +86,7 @@ class Alarm(WithConfig):
 
         return -300. <= timeDiffSec <= 0.
 
-    def spin(self):
-        """drop in infinite loop to spin alarm"""
-        count = 0
-        while True:
-            self.spin_once(count == 10)
-            gc.collect()
-            print("free=", gc.mem_free())
-            count += 1
-
-    def spin_once(self, setNtpTime=False):
+    def spin_once(self):
         # get start time corresponding to alarmtime
         startTime = self.get_expected_time(time.localtime())
         # current time diff
@@ -113,8 +96,3 @@ class Alarm(WithConfig):
         # otherwise we sleep and get ntp time
         if 0. < dt < self.action.sunriseTimeSec:
             self.action.process_once(dt)
-        else:
-            time.sleep(self.config['alarm_sleep_time_sec']['value'])
-            # set ntptime
-            if setNtpTime:
-                self.timeSetter.process()

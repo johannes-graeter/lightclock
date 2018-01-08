@@ -46,11 +46,26 @@ s.set_exp_vars(5., 3.5)
 timeSetter = TimeSetter(config)
 
 # set alarm
-alarm = Alarm(s, timeSetter, config)
+alarm = Alarm(s, config)
 
 # don't prepone for debugging
 alarm.set_action_prepone_time_min(0.)
 
 gc.collect()
 print("Memory usage=", gc.mem_free())
-alarm.spin()
+
+# set ntp-time
+timeSetter.process()
+
+tim = machine.Timer(-1)
+
+
+def spin_and_collect():
+    alarm.spin_once()
+    gc.collect()
+
+tim.init(period=config['period_alarm_ms']['value'], mode=machine.Timer.PERIODIC, callback=spin_and_collect)
+
+# set ntptime
+tim.init(period=config['period_get_ntp_time_ms']['value'], mode=machine.Timer.PERIODIC,
+         callback=lambda t: timeSetter.process())

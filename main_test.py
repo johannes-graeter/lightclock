@@ -2,19 +2,11 @@ import json
 
 from alarm import Alarm
 from clock_actions import *
-
-
-class TimeSetterDummy:
-    def __init__(self):
-        pass
-
-    def process(self):
-        print("TimeSetterDummy::process called")
+import time
 
 
 def main():
     # this main is for testing on a normal ubuntu system
-
     # hard coded defines
     pathToConfigs = "./config.json"
 
@@ -27,10 +19,11 @@ def main():
     s = StringPrinter("rise sun!", config)
 
     # set alarm
-    alarm = Alarm(s, TimeSetterDummy(), config)
+    alarm = Alarm(s, config)
 
-    alarm.spin()
-
+    while True:
+        alarm.spin_once()
+        time.sleep(1.)
     print("done")
 
 
