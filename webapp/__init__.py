@@ -43,6 +43,9 @@ class WebApp():
                 config_file.write(ujson.dumps(config))
                 config_file.close()
 
+            del config_changed, param
+
+        gc.collect()
         print(gc.mem_free())
 
         # Render and return HTML page
@@ -59,6 +62,7 @@ class WebApp():
         for s in template(config):
             yield from response.awrite(s)
 
+        del config, template_loader, template, s
         gc.collect()
         print(gc.mem_free())
 
