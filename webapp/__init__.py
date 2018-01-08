@@ -17,7 +17,8 @@ class WebApp():
         self.app = picoweb.WebApp(__name__, ROUTES)
 
         gc.collect()
-        print(gc.mem_free())
+        if self.debug:
+            print(gc.mem_free())
 
     def homepage(self, request, response):
         gc.collect()
@@ -67,7 +68,8 @@ class WebApp():
 
         del config, template_loader, template, s
         gc.collect()
-        print(gc.mem_free())
+        if self.debug:
+            print(gc.mem_free())
 
 
     def styles(self, request, response):
@@ -77,7 +79,8 @@ class WebApp():
         yield from self.app.sendfile(response, request.url_match.group(1))
 
         gc.collect()
-        print(gc.mem_free())
+        if self.debug:
+            print(gc.mem_free())
 
 
     # TODO use gzip content encoding for speedup, if an encoded file is available (see picoweb#25)
