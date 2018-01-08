@@ -18,7 +18,7 @@ class WebApp():
 
     def homepage(self, request, response):
         gc.collect()
-        print(gc.mem_free())
+        # print(gc.mem_free())
 
         if (request.method not in ['GET', 'POST']):
             return
@@ -46,7 +46,7 @@ class WebApp():
             del config_changed, param
 
         gc.collect()
-        print(gc.mem_free())
+        # print(gc.mem_free())
 
         # Render and return HTML page
         yield from picoweb.start_response(response)
@@ -57,7 +57,7 @@ class WebApp():
         # render_template uses utemplate.source, which needs too much memory (see picoweb#24)
         # yield from app.render_template(response, "config.html", config)
 
-        print(gc.mem_free())
+        # print(gc.mem_free())
 
         for s in template(config):
             yield from response.awrite(s)
