@@ -17,31 +17,31 @@
     <form class="form-horizontal form-config" action="/" method="post">
       <h2 class="form-config-heading">Lightclock settings</h2>
 
-      {% for param in params %}
-        {% if 'html_type' in param %}
+      {% for param_name, param_data in params.items() %}
+        {% if 'html_type' in param_data %}
           <div class="form-group">
-            <label for="{{ param['name'] }}" class="col-sm-8 control-label">
-              {% if 'description' in param %}
-                {{ param['description'] }}
+            <label for="{{ param_name }}" class="col-sm-8 control-label">
+              {% if 'description' in param_data %}
+                {{ param_data['description'] }}
               {% else %}
-                {{ param['name'] }}
+                {{ param_name }}
               {% endif %}
             </label>
 
-            {% if param['html_type']=='time' %}
-              <div class="clockpicker col-sm-4" data-autoclose="true" data-default="{{ param['value'] }}">
-                <input type="text" class="form-control" name="{{ param['name'] }}" id="{{ param['name'] }}" placeholder="{{ param['value'] }}">
+            {% if param_data['html_type']=='time' %}
+              <div class="clockpicker col-sm-4" data-autoclose="true" data-default="{{ param_data['value'] }}">
+                <input type="text" class="form-control" name="{{ param_name }}" id="{{ param_name }}" placeholder="{{ param_data['value'] }}">
               </div>
             {% else %}
               <div class="col-sm-4">
-                <input type="{{ param['html_type'] }}" class="form-control" name="{{ param['name'] }}" id="{{ param['name'] }}"
-                     {% if 'min' in param %}
-                        min="{{ param['min'] }}"
+                <input type="{{ param_data['html_type'] }}" class="form-control" name="{{ param_name }}" id="{{ param_name }}"
+                     {% if 'min' in param_data %}
+                        min="{{ param_data['min'] }}"
                      {% endif %}
-                     {% if 'max' in param %}
-                        max="{{ param['max'] }}"
+                     {% if 'max' in param_data %}
+                        max="{{ param_data['max'] }}"
                      {% endif %}
-                     placeholder="{{ param['value'] }}">
+                     placeholder="{{ param_data['value'] }}">
               </div>
             {% endif %}
           </div>

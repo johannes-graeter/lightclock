@@ -36,10 +36,10 @@ class WebApp():
             yield from request.read_form_data()
 
             config_changed = False
-            for param in config:
+            for param_name, param_data in config.items():
                 # Read configurable parameters, given per POST, that are not empty
-                if 'html_type' in param and request.form.get(param['name']) and request.form[param['name']][0]:
-                    param['value'] = request.form[param['name']][0]
+                if 'html_type' in param_data and request.form.get(param_name) and request.form[param_name][0]:
+                    param_data['value'] = request.form[param_name][0]
                     config_changed = True
 
             if config_changed:
@@ -47,7 +47,7 @@ class WebApp():
                 config_file.write(ujson.dumps(config))
                 config_file.close()
 
-            del config_changed, param
+            del config_changed, param_name, param_data
 
         gc.collect()
         # print(gc.mem_free())
