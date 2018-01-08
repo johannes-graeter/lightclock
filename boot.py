@@ -11,3 +11,6 @@ gc.collect()
 
 # connect to router, config has fields ssid and password, optional: static_ip
 do_connect("./config_wifi.json")
+
+gc.collect()
+print("memory usage=",gc.mem_free())

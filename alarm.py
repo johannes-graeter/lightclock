@@ -1,14 +1,18 @@
 try:
     import utime as time
+    import gc
 except:
     import time
 
-try:
-    import machine
-except:
-    pass
+from with_config import WithConfig
 
-class Alarm:
+
+# try:
+#     import machine
+# except:
+#     pass
+
+class Alarm(WithConfig):
     """class that triggers an action at a given time
 
         Args:
@@ -20,39 +24,25 @@ class Alarm:
             sleepTimeSec (int): time in seconds to sleep after each loop while spinning
             actionPreponeTimeMin (int): time in minutes before wakingTime at which action will be triggered
             filename (str): path to file where the alarmtime is saved in the format "%02i:%02i:%02f"%(hour,minutes,seconds)
-            timeSetter (...): object with function process, that sets ntp time on machine
     """
 
-    def __init__(self, action, timeSetter):
+    def __init__(self, action, config):
+        # init config setter
+        config_attributes = [
+            'alarmtime',
+            'verbose'
+        ]
+        super(Alarm, self).__init__(config_attributes, config)
+
         # inputs
         # action to trigger
         self.action = action
-
-        # defaults
-        # waking time in hour, minute, second
-        self.wakingTime = [13, 30, 00]
-
-        # sleep time while spinning
-        self.sleepTimeSec = 60.
 
         # time in minutes before action should start
         self.actionPreponeTimeMin = 30
 
         # path to file which shall be read
         self.filename = "./alarmtime.json"
-
-        # print next waking time to cout
-        self.verbose = False
-
-        # object that sets ntptime on controller
-        self.timeSetter = timeSetter
-
-        # set the ntp time
-        self.timeSetter.process()
-
-    def set_verbosity(self, verbose):
-        self.verbose = verbose
-        print("set verbosity to ", self.verbose)
 
     def set_action_prepone_time_min(self, timeMin):
         self.actionPreponeTimeMin = int(timeMin)
@@ -63,52 +53,46 @@ class Alarm:
     def set_alarmtime_filename(self, filename):
         self.filename = filename
 
-    def read_alarmtime(self):
-        """read alarmtime from file"""
-        f = open(self.filename, "r")
-        a = f.readline()
-
+    def get_alarmtime(self):
+        """convert alarmtime (format hh:mm:ss, ss optional) into tuple of ints"""
         # split it and convert to int (first to float since seconds can be a float in datetime format)
-        self.wakingTime = tuple([int(float(x)) for x in a.strip().split(":")])
+        return tuple([int(float(x)) for x in self.config['alarmtime']['value'].strip().split(":")])
 
-    def start(self):
-        """test if current time is waking time - preponeTime"""
-
-        # get current time
-        tm = time.localtime()
-
+    def get_expected_time(self, tm):
+        """ get time that was read from file corresponding to current year including prepone time"""
         # get expected start time
-        expectedTime = time.mktime((tm[0], tm[1], tm[2], self.wakingTime[0],
-                                    self.wakingTime[1] - self.actionPreponeTimeMin, tm[5], tm[6], tm[7]))
-        if self.verbose:
+        wakingTime = self.get_alarmtime()
+        try:
+            expectedTime = time.mktime((tm[0], tm[1], tm[2], wakingTime[0],
+                                        wakingTime[1] - self.actionPreponeTimeMin, 0, tm[6], tm[7]))
+        except:
+            expectedTime = time.mktime((tm[0], tm[1], tm[2], wakingTime[0],
+                                        wakingTime[1] - self.actionPreponeTimeMin, 0, tm[6], tm[7], 0))
+        if self.config['verbose']['value']:
             print("waking at ", end="")
             print(time.localtime(expectedTime), end=" ")
             print("current time is ", end="")
             print(tm)
 
+        return expectedTime
+
+    def start(self):
+        """test if current time is waking time - preponeTime"""
+        # get current time
+        tm = time.localtime()
+
         # convert time to seconds, if the time diff is between negative threshold and zero start
-        timeDiffSec = expectedTime - time.mktime(tm)
+        timeDiffSec = self.get_expected_time(tm) - time.mktime(tm)
 
         return -300. <= timeDiffSec <= 0.
 
-    def spin(self):
-        """drop in infinite loop to spin alarm"""
-        count = 0
-        while True:
-            self.read_alarmtime()
+    def spin_once(self):
+        # get start time corresponding to alarmtime
+        startTime = self.get_expected_time(time.localtime())
+        # current time diff
+        dt = time.time() - startTime
 
-            if self.start():
-                if self.verbose:
-                    print("starting waking action")
-                self.action.process()
-
-            # try:
-            #     machine.idle()
-            # except:
-            time.sleep(self.sleepTimeSec)
-
-            # set ntptime every tenth loop
-            if count > 10:
-                count=0
-                self.timeSetter.process()
-            count += 1
+        # if the time difference is smaller sunrise time, this means we should adjust the light corresponding to dt
+        # otherwise we sleep and get ntp time
+        if 0. < dt < self.action.sunriseTimeSec:
+            self.action.process_once(dt)

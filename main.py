@@ -5,6 +5,7 @@ from clock_actions_micropython import *
 import machine
 import utime as time
 from time_setter import TimeSetter
+import gc
 
 
 def blink_led(pin_number):
@@ -16,75 +17,55 @@ def blink_led(pin_number):
     time.sleep_ms(500)
 
 
-
 # hard coded defines
 pathToConfigs = "./config.json"
 
-# get configs
-maxIntensity = 100
-sunriseTimeSec = 30. * 60.
-alarmSleepTimeSec = 1.0
-utcDelay = 0
-
+# get config
 config = {}
 try:
     config = json.load(open(pathToConfigs, "r"))
 except:
-    print("couldn't read config"+pathToConfigs)
+    print("couldn't read config" + pathToConfigs)
     blink_led(0)
     time.sleep(500)
     blink_led(0)
     time.sleep(500)
 
-try:
-    maxIntensity = config["max_intensity_percent"]
-    alarmSleepTimeSec = config["alarm_sleep_time_sec"]
-    sunriseTimeSec = config["sunrise_time_sec"]
-    utcDelay = config["utc_delay"]
-except:
-    print("not enough configs specified")
-    blink_led(2)
-    time.sleep(500)
-    blink_led(2)
-    time.sleep(500)
-    blink_led(2)
-
-# ledNum = 15 # use pin without LED branched to it
-
-# do one sunrise to show you are there
-s_startup = SunriseExp()
-# try it on 0 pin because it has an led
-s_startup.set_led_num(0)
-s_startup.set_max_intensity_percent(maxIntensity)
-s_startup.set_sunrise_time(10.)
-s_startup.set_exp_vars(100., 1.5)
-s_startup.process()
-# print("end of sunrise")
+# turn on the led to show you are there
+machine.PWM(machine.Pin(0, machine.Pin.OUT), freq=20000).duty(1)
+time.sleep_ms(1000)
 
 # turn off the led (why doesn't simply putting low() suffice?
-machine.PWM(machine.Pin(0,machine.Pin.OUT), freq=20000).duty(1024)
-
-ledNum = 0  # use pin without LED branched to
-if "led_number" in config:
-    ledNum = config["led_number"]
+machine.PWM(machine.Pin(0, machine.Pin.OUT), freq=20000).duty(1024)
 
 # create instance of sunrise which will be launched by alarm at the correct time
-s = SunriseExp()
-s.set_led_num(ledNum)
-s.set_max_intensity_percent(maxIntensity)
-s.set_sunrise_time(sunriseTimeSec)
+s = SunriseExp(config)
 s.set_exp_vars(5., 3.5)
 
+# time zone manager
+timeSetter = TimeSetter(config)
+
 # set alarm
-timeSetter = TimeSetter(utcDelay)
-timeSetter.set_verbose(True)
-alarm = Alarm(s, timeSetter)
+alarm = Alarm(s, config)
 
-if "verbose" in config:
-    alarm.set_verbosity(config["verbose"])
-
-alarm.set_sleep_time_spinning_sec(alarmSleepTimeSec)
 # don't prepone for debugging
 alarm.set_action_prepone_time_min(0.)
 
-alarm.spin()
+gc.collect()
+print("Memory usage=", gc.mem_free())
+
+# set ntp-time
+timeSetter.process()
+
+tim = machine.Timer(-1)
+
+
+def spin_and_collect():
+    alarm.spin_once()
+    gc.collect()
+
+tim.init(period=config['period_alarm_ms']['value'], mode=machine.Timer.PERIODIC, callback=spin_and_collect)
+
+# set ntptime
+tim.init(period=config['period_get_ntp_time_ms']['value'], mode=machine.Timer.PERIODIC,
+         callback=lambda t: timeSetter.process())
