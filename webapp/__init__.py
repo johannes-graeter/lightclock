@@ -83,18 +83,28 @@ class WebApp():
             print(gc.mem_free())
 
 
-    # TODO use gzip content encoding for speedup, if an encoded file is available (see picoweb#25)
-    # def styles(request, response):
-    #     file_path = request.url_match.group(1)
-    #
-    #     if b"gzip" in request.headers[b"Accept-Encoding"]:
-    #         file_path_gzip = file_path + ".gz"
-    #         import os
-    #         if file_path_gzip in os.listdir("/"):
-    #             yield from self.app.sendfile(response, file_path_gzip, 'text/css', 'gzip')
-    #             return
-    #
-    #     yield from self.app.sendfile(response, file_path, 'text/css')
+    # Use gzip content encoding for speedup, if an encoded file is available
+    def styles(self, request, response):
+        file_path = request.url_match.group(1)
+
+        if b"gzip" in request.headers[b"Accept-Encoding"]:
+            print("client accepts gzip")
+            file_path_gzip = file_path + ".gz"
+            import os
+            if file_path_gzip in os.listdir("webapp"):
+                print("sending " + file_path_gzip)
+                yield from self.app.sendfile(response, file_path_gzip, b"text/css", b"Content-Encoding: gzip\r\n"
+                                                                                    b"Cache-Control: max-age=86400\r\n")
+                return
+
+            yield from self.app.sendfile(response, file_path, b"text/css", b"Cache-Control: max-age=86400\r\n")
+            del file_path_gzip
+
+        del file_path
+        gc.collect()
+        if self.debug:
+            print(gc.mem_free())
+
 
     def run(self):
         self.app.run(host=self.host, debug=self.debug)
