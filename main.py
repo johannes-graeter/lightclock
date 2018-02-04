@@ -62,7 +62,7 @@ timeSetter.process()
 tim = machine.Timer(-1)
 
 
-def spin_and_collect():
+def spin_and_collect(timer):
     alarm.spin_once()
     gc.collect()
 
