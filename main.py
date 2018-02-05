@@ -8,6 +8,7 @@ from time_setter import TimeSetter
 import gc
 
 gc.collect()
+print('loading webapp, free memory = ', gc.mem_free())
 
 
 def blink_led(pin_number):
@@ -54,7 +55,7 @@ alarm = Alarm(s, config)
 alarm.set_action_prepone_time_min(0.)
 
 gc.collect()
-print("Memory usage=", gc.mem_free())
+print('free memory = ', gc.mem_free())
 
 # set ntp-time
 timeSetter.process()
