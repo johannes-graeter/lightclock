@@ -12,11 +12,11 @@ print('loading webapp, free memory = ', gc.mem_free())
 
 
 def blink_led(pin_number):
-    machine.Pin(pin_number, machine.Pin.OUT).low()
+    machine.Pin(pin_number, machine.Pin.OUT).on()
     time.sleep_ms(500)
-    machine.Pin(pin_number, machine.Pin.OUT).high()
+    machine.Pin(pin_number, machine.Pin.OUT).off()
     time.sleep_ms(500)
-    machine.Pin(pin_number, machine.Pin.OUT).low()
+    machine.Pin(pin_number, machine.Pin.OUT).on()
     time.sleep_ms(500)
 
 
