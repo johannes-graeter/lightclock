@@ -1,5 +1,5 @@
 import math
-from with_config import WithConfig
+from alarmclock.with_config import WithConfig
 
 try:
     import machine
