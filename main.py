@@ -7,9 +7,9 @@ import utime as time
 gc.collect()
 print('loading alarm clock, free memory = ', gc.mem_free())
 
-from alarm import Alarm
-from clock_actions_micropython import *
-from time_setter import TimeSetter
+from alarmclock import alarm as a
+from alarmclock import clock_actions_micropython as ca
+from alarmclock import time_setter as ts
 
 gc.collect()
 print('loading webapp, free memory = ', gc.mem_free())
@@ -51,14 +51,14 @@ time.sleep_ms(1000)
 machine.PWM(machine.Pin(0, machine.Pin.OUT), freq=20000).duty(1024)
 
 # create instance of sunrise which will be launched by alarm at the correct time
-s = SunriseExp(config)
+s = ca.SunriseExp(config)
 s.set_exp_vars(5., 3.5)
 
 # time zone manager
-timeSetter = TimeSetter(config)
+timeSetter = ts.TimeSetter(config)
 
 # set alarm
-alarm = Alarm(s, config)
+alarm = a.Alarm(s, config)
 
 # don't prepone for debugging
 alarm.set_action_prepone_time_min(0.)
@@ -69,22 +69,27 @@ print('free memory = ', gc.mem_free())
 # set ntp-time
 timeSetter.process()
 
-tim = machine.Timer(-1)
-
-
 def spin_and_collect(timer):
     alarm.spin_once()
     gc.collect()
 
-tim.init(period=config['period_alarm_ms']['value'], mode=machine.Timer.PERIODIC, callback=spin_and_collect)
+
+timers = [machine.Timer(0), machine.Timer(1)]
+timers[0].init(period=config['period_alarm_ms']['value'], mode=machine.Timer.PERIODIC, callback=spin_and_collect)
 
 # set ntptime
-tim.init(period=config['period_get_ntp_time_ms']['value'], mode=machine.Timer.PERIODIC,
-         callback=lambda t: timeSetter.process())
+timers[1].init(period=config['period_get_ntp_time_ms']['value'], mode=machine.Timer.PERIODIC,
+               callback=lambda t: timeSetter.process())
+
 
 gc.collect()
 app = webapp.WebApp(host=sta_if.ifconfig()[0], debug=config["verbose"]["value"])
 gc.collect()
 print('free memory = ', gc.mem_free())
 
-app.run()
+try:
+    app.run()
+except KeyboardInterrupt:
+    print("ctrl+c pressed, quitting")
+    for tim in timers:
+        tim.deinit()

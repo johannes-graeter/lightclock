@@ -93,8 +93,9 @@ class SunriseExp(Sunrise):
         self.b = 1.5
         self.c = self.a
 
-        self.intensityProfile = lambda x: min(self.a * math.exp(self.b / self.config['sunrise_time_sec']['value'] * x) - self.c,
-                                              self.get_max_intensity_percent())
+        self.intensityProfile = lambda x: min(
+            self.a * math.exp(self.b / self.config['sunrise_time_sec']['value'] * x) - self.c,
+            self.get_max_intensity_percent())
 
     def set_exp_vars(self, a, b):
         self.a = a

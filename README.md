@@ -27,12 +27,10 @@ Copy files:
 * You will need the following files under the same filenames intpo the root directory on the board:
     * `boot.py`
     * `connect_to_router.py`
-    * `alarm.py`
-    * `clock_actions_micropython.py`
-    * `time_setter.py`
+    * the module `alarmclock` in a folder
     * `main.py`
     * `config.json`
-    * `alarmtime.json`
+
 * You will need to configure your private configs. Therefore put the following files into your root directory:
     * `config_wifi.json` where you put the data of your network in the following format, static_ip is the ip which the controller will have at startup:
         ```json

@@ -1,7 +1,7 @@
 import json
 
-from alarm import Alarm
-from clock_actions import *
+from alarmclock import alarm as a
+from dev_tools import clock_actions
 import time
 
 
@@ -16,10 +16,10 @@ def main():
     # create instance of sunrise which will be launched by alarm at the correct time
     # read maximum intensity
 
-    s = StringPrinter("rise sun!", config)
+    s = clock_actions.StringPrinter("rise sun!", config)
 
     # set alarm
-    alarm = Alarm(s, config)
+    alarm = a.Alarm(s, config)
 
     while True:
         alarm.spin_once()
