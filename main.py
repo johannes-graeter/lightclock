@@ -14,6 +14,11 @@ from time_setter import TimeSetter
 gc.collect()
 print('loading webapp, free memory = ', gc.mem_free())
 
+import webapp
+
+gc.collect()
+print('free memory = ', gc.mem_free())
+
 
 def blink_led(pin_number):
     machine.Pin(pin_number, machine.Pin.OUT).on()
@@ -77,5 +82,9 @@ tim.init(period=config['period_alarm_ms']['value'], mode=machine.Timer.PERIODIC,
 tim.init(period=config['period_get_ntp_time_ms']['value'], mode=machine.Timer.PERIODIC,
          callback=lambda t: timeSetter.process())
 
-while True:
-    pass
+gc.collect()
+app = webapp.WebApp(host=sta_if.ifconfig()[0], debug=config["verbose"]["value"])
+gc.collect()
+print('free memory = ', gc.mem_free())
+
+app.run()
