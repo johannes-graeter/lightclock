@@ -17,7 +17,7 @@ print('loading webapp, free memory = ', gc.mem_free())
 import webapp
 
 gc.collect()
-print('free memory = ', gc.mem_free())
+print('setup configs, free memory = ', gc.mem_free())
 
 
 def blink_led(pin_number):
@@ -64,7 +64,7 @@ alarm = a.Alarm(s, config)
 alarm.set_action_prepone_time_min(0.)
 
 gc.collect()
-print('free memory = ', gc.mem_free())
+print('set ntp-time, free memory = ', gc.mem_free())
 
 # set ntp-time
 timeSetter.process()
@@ -73,6 +73,8 @@ def spin_and_collect(timer):
     alarm.spin_once()
     gc.collect()
 
+gc.collect()
+print('create interrupts, free memory = ', gc.mem_free())
 
 timers = [machine.Timer(0), machine.Timer(1)]
 timers[0].init(period=config['period_alarm_ms']['value'], mode=machine.Timer.PERIODIC, callback=spin_and_collect)
@@ -85,7 +87,7 @@ timers[1].init(period=config['period_get_ntp_time_ms']['value'], mode=machine.Ti
 gc.collect()
 app = webapp.WebApp(host=sta_if.ifconfig()[0], debug=config["verbose"]["value"])
 gc.collect()
-print('free memory = ', gc.mem_free())
+print('run webapp, free memory = ', gc.mem_free())
 
 try:
     app.run()
