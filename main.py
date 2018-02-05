@@ -85,6 +85,7 @@ timers[1].init(period=config['period_get_ntp_time_ms']['value'], mode=machine.Ti
 
 
 gc.collect()
+sta_if = network.WLAN(network.STA_IF)
 app = webapp.WebApp(host=sta_if.ifconfig()[0], debug=config["verbose"]["value"])
 gc.collect()
 print('run webapp, free memory = ', gc.mem_free())
