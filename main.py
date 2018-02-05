@@ -1,11 +1,15 @@
+import gc
+import machine
+import network
 import ujson as json
+import utime as time
+
+gc.collect()
+print('loading alarm clock, free memory = ', gc.mem_free())
 
 from alarm import Alarm
 from clock_actions_micropython import *
-import machine
-import utime as time
 from time_setter import TimeSetter
-import gc
 
 gc.collect()
 print('loading webapp, free memory = ', gc.mem_free())
