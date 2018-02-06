@@ -35,7 +35,9 @@ pathToConfigs = "./config.json"
 # get config
 config = {}
 try:
-    config = json.load(open(pathToConfigs, "r"))
+    config_file = open(pathToConfigs, "r")
+    config = json.load(config_file)
+    config_file.close()
 except:
     print("couldn't read config" + pathToConfigs)
     blink_led(0)
