@@ -39,7 +39,7 @@ try:
     config = json.load(config_file)
     config_file.close()
 except:
-    print("couldn't read config" + pathToConfigs)
+    print("couldn't read config " + pathToConfigs)
     blink_led(0)
     time.sleep(500)
     blink_led(0)
