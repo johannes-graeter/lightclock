@@ -28,8 +28,8 @@ class WebApp():
             return
 
         # Load config from json
-        import ujson
-        config = ujson.load(open("../config.json", "r"))
+        import ujson as json
+        config = json.load(open("../config.json", "r"))
 
         # Save new config to json if given
         if request.method == 'POST':
@@ -44,7 +44,8 @@ class WebApp():
 
             if config_changed:
                 config_file = open("config.json", "w")
-                config_file.write(ujson.dumps(config))
+                config_file.write(json.dumps(config))
+                # json.dump(config, config_file) # Unfortunately not supported by ujson
                 config_file.close()
 
             del config_changed, param_name, param_data
