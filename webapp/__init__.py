@@ -57,7 +57,7 @@ class WebApp():
         yield from picoweb.start_response(response)
 
         import utemplate.compiled
-        template_loader = utemplate.compiled.Loader(None, "webapp/templates")
+        template_loader = utemplate.compiled.Loader(None, "webapp_templates")
         template = template_loader.load("config.html")
         # render_template uses utemplate.source, which needs too much memory (see picoweb#24)
         # yield from app.render_template(response, "config.html", config)
@@ -81,7 +81,7 @@ class WebApp():
             print("client accepts gzip")
             file_path_gzip = file_path + ".gz"
             import os
-            if file_path_gzip in os.listdir("webapp"):
+            if file_path_gzip in os.listdir("webapp_static"):
                 print("sending " + file_path_gzip)
                 yield from self.app.sendfile(response, file_path_gzip, b"text/css", b"Content-Encoding: gzip\r\n"
                                                                                     b"Cache-Control: max-age=86400\r\n")
