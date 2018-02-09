@@ -78,33 +78,33 @@ def spin_and_collect(timer):
 gc.collect()
 print('create interrupts, free memory = ', gc.mem_free())
 
-timers = [machine.Timer(0), machine.Timer(1)]
-timers[0].init(period=config['period_alarm_ms']['value'], mode=machine.Timer.PERIODIC, callback=spin_and_collect)
-
-# set ntptime
-timers[1].init(period=config['period_get_ntp_time_ms']['value'], mode=machine.Timer.PERIODIC,
-               callback=lambda t: timeSetter.process(100))
-
-
-
-gc.collect()
-
-sta_if = network.WLAN(network.STA_IF)
-
-if sta_if.isconnected():
-    app = webapp.WebApp(host=sta_if.ifconfig()[0], debug=config["verbose"]["value"])
-else:
-    ap_if = network.WLAN(network.AP_IF)
-    while not ap_if.isconnected():
-        print("Not connected to the router, waiting for device connecting to access point")
-        time.sleep(1)
-
-    app = webapp.WebApp(host=ap_if.ifconfig()[0], debug=config["verbose"]["value"])
-
-gc.collect()
-print('run webapp, free memory = ', gc.mem_free())
 
 try:
+    timers = [machine.Timer(0), machine.Timer(1)]
+    timers[0].init(period=config['period_alarm_ms']['value'], mode=machine.Timer.PERIODIC, callback=spin_and_collect)
+
+    # set ntptime
+    timers[1].init(period=config['period_get_ntp_time_ms']['value'], mode=machine.Timer.PERIODIC,
+                   callback=lambda t: timeSetter.process(100))
+
+
+    gc.collect()
+
+    sta_if = network.WLAN(network.STA_IF)
+
+    if sta_if.isconnected():
+        app = webapp.WebApp(host=sta_if.ifconfig()[0], debug=config["verbose"]["value"])
+    else:
+        ap_if = network.WLAN(network.AP_IF)
+        while not ap_if.isconnected():
+            print("Not connected to the router, waiting for device connecting to access point")
+            time.sleep(1)
+
+        app = webapp.WebApp(host=ap_if.ifconfig()[0], debug=config["verbose"]["value"])
+
+    gc.collect()
+    print('run webapp, free memory = ', gc.mem_free())
+
     app.run()
 except KeyboardInterrupt:
     print("ctrl+c pressed, quitting")
