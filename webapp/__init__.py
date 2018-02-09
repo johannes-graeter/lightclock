@@ -73,17 +73,6 @@ class WebApp():
             print(gc.mem_free())
 
 
-    def styles(self, request, response):
-        if (request.method not in ['GET']):
-            return
-
-        yield from self.app.sendfile(response, request.url_match.group(1))
-
-        gc.collect()
-        if self.debug:
-            print(gc.mem_free())
-
-
     # Use gzip content encoding for speedup, if an encoded file is available
     def styles(self, request, response):
         file_path = request.url_match.group(1)
