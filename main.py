@@ -69,7 +69,7 @@ gc.collect()
 print('set ntp-time, free memory = ', gc.mem_free())
 
 # set ntp-time
-timeSetter.process()
+timeSetter.process(1000)
 
 def spin_and_collect(timer):
     alarm.spin_once()
@@ -83,7 +83,7 @@ timers[0].init(period=config['period_alarm_ms']['value'], mode=machine.Timer.PER
 
 # set ntptime
 timers[1].init(period=config['period_get_ntp_time_ms']['value'], mode=machine.Timer.PERIODIC,
-               callback=lambda t: timeSetter.process())
+               callback=lambda t: timeSetter.process(100))
 
 
 

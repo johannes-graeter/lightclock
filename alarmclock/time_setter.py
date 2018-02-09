@@ -22,9 +22,11 @@ class TimeSetter(WithConfig):
         ]
         super(TimeSetter, self).__init__(config_attributes, config)
 
-    def process(self):
+    def process(self, timeout):
         is_time_set = False
-        while not is_time_set:
+        start_time = time.ticks_ms()
+
+        while not is_time_set and time.ticks_diff(time.ticks_ms(), start_time) < timeout:
             try:
                 ntptime.settime()
                 if self.config['verbose']['value']:
@@ -34,6 +36,7 @@ class TimeSetter(WithConfig):
                 time.sleep(1)
                 if self.config['verbose']['value']:
                     print(".", end="")
+                continue
 
             tm = time.localtime()
             # add delay
