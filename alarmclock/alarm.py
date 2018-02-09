@@ -4,7 +4,7 @@ try:
 except:
     import time
 
-from with_config import WithConfig
+from alarmclock.with_config import WithConfig
 
 
 # try:
@@ -94,5 +94,5 @@ class Alarm(WithConfig):
 
         # if the time difference is smaller sunrise time, this means we should adjust the light corresponding to dt
         # otherwise we sleep and get ntp time
-        if 0. < dt < self.action.sunriseTimeSec:
+        if 0. < dt < float(self.action.config['sunrise_time_sec']['value']):
             self.action.process_once(dt)

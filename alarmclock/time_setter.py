@@ -1,7 +1,7 @@
 import ntptime
 import machine
 import utime as time
-from with_config import WithConfig
+from alarmclock.with_config import WithConfig
 import gc
 
 
@@ -37,7 +37,8 @@ class TimeSetter(WithConfig):
 
             tm = time.localtime()
             # add delay
-            tm_sec = time.mktime((tm[0], tm[1], tm[2], tm[3] + self.config['utc_delay']['value'], tm[4], tm[5], tm[6], tm[7]))
+            tm_sec = time.mktime(
+                (tm[0], tm[1], tm[2], tm[3] + self.config['utc_delay']['value'], tm[4], tm[5], tm[6], tm[7]))
             tm = time.localtime(tm_sec)
             # convert to format for rtc
             tm = tm[0:3] + (0,) + tm[3:6] + (0,)

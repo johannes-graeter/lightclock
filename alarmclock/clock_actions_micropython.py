@@ -1,5 +1,5 @@
 import math
-from with_config import WithConfig
+from alarmclock.with_config import WithConfig
 
 try:
     import machine
@@ -31,13 +31,13 @@ class Sunrise(WithConfig):
         super(Sunrise, self).__init__(config_attributes, config)
 
         # default profile is linear
-        self.intensityProfile = lambda x: 50 + x / self.config['sunrise_time_sec']['value'] * 205
+        self.intensityProfile = lambda x: 50 + x / float(self.config['sunrise_time_sec']['value']) * 205
 
         # led delay in millisec
         self.delayMs = 1
 
     def get_max_intensity_percent(self):
-        return min(int(self.config['max_intensity_percent']['value']), 100)
+        return min(float(self.config['max_intensity_percent']['value']), 100)
 
     def set_intensity_profile(self, func):
         """setter for the intensity profile function
@@ -51,7 +51,7 @@ class Sunrise(WithConfig):
 
         # run sunrise
         dt = 0.
-        while self.config['sunrise_time_sec']['value'] - dt > 0.:
+        while float(self.config['sunrise_time_sec']['value']) - dt > 0.:
             # set new dt
             dt = time.time() - beginTime
 
@@ -64,7 +64,7 @@ class Sunrise(WithConfig):
     def process_once(self, dt):
         # print("start sunrise")
         # select led
-        led = machine.PWM(machine.Pin(self.config['led_num']['value'], machine.Pin.OUT), freq=20000)
+        led = machine.PWM(machine.Pin(self.config['led_number']['value'], machine.Pin.OUT), freq=20000)
 
         # intensity from profile ->strategy pattern
         intensity = int(self.intensityProfile(dt))
@@ -93,8 +93,9 @@ class SunriseExp(Sunrise):
         self.b = 1.5
         self.c = self.a
 
-        self.intensityProfile = lambda x: min(self.a * math.exp(self.b / self.config['sunrise_time_sec']['value'] * x) - self.c,
-                                              self.get_max_intensity_percent())
+        self.intensityProfile = lambda x: min(
+            self.a * math.exp(self.b / float(self.config['sunrise_time_sec']['value']) * x) - self.c,
+            self.get_max_intensity_percent())
 
     def set_exp_vars(self, a, b):
         self.a = a

@@ -10,5 +10,5 @@ class WithConfig:
         # check if names are in config
         for n in names:
             if n not in config:
-                raise Exception("name "+n+" not defined in config")
+                raise Exception("name " + n + " not defined in config")
         self.config = config
