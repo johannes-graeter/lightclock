@@ -27,7 +27,7 @@ deploy-webapp:
 	ampy put webapp
 
 deploy-webapp-static:
-	ampy put webapp_static
+	ampy put webapp_static webapp
 
 deploy-webapp-templates:
 	ampy put webapp_templates

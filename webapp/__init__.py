@@ -85,7 +85,7 @@ class WebApp():
             print("client accepts gzip")
             file_path_gzip = file_path + ".gz"
             import os
-            if file_path_gzip in os.listdir("webapp_static"):
+            if file_path_gzip in os.listdir("webapp"):
                 print("sending " + file_path_gzip)
                 yield from self.app.sendfile(response, file_path_gzip, b"text/css", b"Content-Encoding: gzip\r\n"
                                                                                     b"Cache-Control: max-age=86400\r\n")
