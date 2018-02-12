@@ -45,3 +45,12 @@ erase:
 	ampy rmdir alarmclock
 	ampy rm boot.py
 	ampy rm main.py
+
+webapp-static:
+	find webapp_static -name "*.css" -print0 | xargs -0 -I % gzip -k -f --best %
+	find webapp_static -name "*.js" -print0 | xargs -0 -I % gzip -k -f --best %
+
+webapp-templates:
+	sed -e "s/^[[:space:]]*//g" webapp_templates/config.html | tr -d '\n' > webapp_templates/config.html.min
+	python3 ../utemplate/utemplate_util.py "rawcompile" webapp_templates/config.html.min
+	mv webapp_templates/config_html_min.py webapp_templates/config_html.py

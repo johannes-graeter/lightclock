@@ -34,26 +34,24 @@ As online template rendering using `utemplate.source` is too memory expensive fo
     `git clone https://github.com/pfalcon/utemplate.git <path_to_utemplate>`
 
 2. Compile config.html to config_html.py:  
-    `python3 <path_to_utemplate>/utemplate_util.py "rawcompile" webapp/templates/config.html`
+    `python3 <path_to_utemplate>/utemplate_util.py "rawcompile" webapp_templates/config.html`
 
 ### 3. Minimize file size
 
-We gzip `bootstrap.min.css` such that the Webapp can provide the compressed version and reduce loading time from 6-8s to 1.6-1.7s:
+We gzip static stylesheets and javascripts such that the Webapp can provide the compressed versions and reduce loading times from 6-8s each to 1.6-1.7s:
 
-    gzip -c --best webapp/bootstrap.min.css > webapp/bootstrap.min.css.gz
-    gzip -c --best webapp/style.css > webapp/style.css.gz
+    make webapp-static
 
-We can also strip trailing whitespace and linebreaks from the dynamic HTML page reducing file size by ~40%
+We can also strip trailing whitespace and linebreaks from the dynamic HTML page reducing transfer size by ~40%
 
-    sed -e "s/^[[:space:]]*//g" webapp/templates/config.html | tr -d '\n' > webapp/templates/config.html.min
-    python3 <path_to_utemplate>/utemplate_util.py "rawcompile" webapp/templates/config.html.min
-    mv webapp/templates/config_html_min.py webapp/templates/config_html.py
+    make webapp-templates
 
 ### 4. Copy Webapp files to board
 
-Copy the webapp files (including the compiled template and compressed stylesheet) to your MicroPython board into the webapp folder, eg.:
+Copy the webapp files (including the compiled template and compressed files) to your MicroPython board into the webapp folders:
 
-    ampy put webapp
+    make deploy
+    make deploy-without-modules
 
 ## Testing
 
