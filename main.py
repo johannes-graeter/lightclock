@@ -110,3 +110,6 @@ except KeyboardInterrupt:
     print("ctrl+c pressed, quitting")
     for tim in timers:
         tim.deinit()
+
+    if sta_if:
+        sta_if.active(False)
