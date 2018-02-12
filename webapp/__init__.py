@@ -5,9 +5,10 @@ import ure as re
 
 class WebApp():
 
-    def __init__(self, host, debug=True):
-        self.debug = debug
+    def __init__(self, host, offline_mode=False, debug=True):
         self.host = host
+        self.offline_mode = offline_mode
+        self.debug = debug
 
         ROUTES = [
             ("/", self.homepage),
@@ -63,6 +64,9 @@ class WebApp():
         # yield from app.render_template(response, "config.html", config)
 
         # print(gc.mem_free())
+
+        if self.offline_mode:
+            config['offline_mode'] = {'value': True}
 
         for s in template(config):
             yield from response.awrite(s)

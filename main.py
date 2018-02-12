@@ -93,14 +93,14 @@ try:
     sta_if = network.WLAN(network.STA_IF)
 
     if sta_if.isconnected():
-        app = webapp.WebApp(host=sta_if.ifconfig()[0], debug=config["verbose"]["value"])
+        app = webapp.WebApp(host=sta_if.ifconfig()[0], offline_mode=False, debug=config["verbose"]["value"])
     else:
         ap_if = network.WLAN(network.AP_IF)
         while not ap_if.isconnected():
             print("Not connected to the router, waiting for device connecting to access point")
             time.sleep(1)
 
-        app = webapp.WebApp(host=ap_if.ifconfig()[0], debug=config["verbose"]["value"])
+        app = webapp.WebApp(host=ap_if.ifconfig()[0], offline_mode=True, debug=config["verbose"]["value"])
 
     gc.collect()
     print('run webapp, free memory = ', gc.mem_free())
