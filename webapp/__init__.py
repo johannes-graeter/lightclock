@@ -80,7 +80,7 @@ class WebApp():
     # Use gzip content encoding for speedup, if an encoded file is available
     def styles(self, request, response):
         gc.collect()
-        
+
         file_path = request.url_match.group(1)
 
         if b"gzip" in request.headers[b"Accept-Encoding"]:
