@@ -7,9 +7,9 @@ Tested with HUZZAH ESP8266 Feather.
 
 * Download the micropython firmware with our lightclock code included from the releases page.
 * Follow [micropython install instructions](https://docs.micropython.org/en/latest/esp8266/esp8266/tutorial/intro.html) until point 1.5, but use our firmware bin instead.
-* Deploy remaining webapp content etc. to the board:
+* Deploy remaining webapp content etc. (from the release) to the board:
     * install ampy: `sudo pip2 install adafruit-ampy`
-    * deploy: `make deploy-without-modules`
+    * deploy: `make deploy-release`
 
 
 ## Building on your own
@@ -51,6 +51,13 @@ Tested with HUZZAH ESP8266 Feather.
 
 3. Deploy the freshly built firmware:
     * as with normal micropython firmware, erase and write the flash as described in the [micropython install instructions](https://docs.micropython.org/en/latest/esp8266/esp8266/tutorial/intro.html) using the freshly build firmware `build/firmware-combined.bin` 
+
+3. Build webapp content
+    * clone [utemplate](https://github.com/pfalcon/utemplate) to your workspace
+    * build the webapp templates (assumes utemplate is in the same folder as lightclock):  
+    `make webapp-templates`
+    * compress static stylesheets and javascripts  
+    `make webapp-static`
 
 3. Deploy webapp content etc. to the board:
     * install ampy: `sudo pip2 install adafruit-ampy`
