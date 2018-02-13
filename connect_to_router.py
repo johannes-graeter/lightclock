@@ -12,10 +12,12 @@ def do_connect(configName, timeout):
             config = json.load(open(configName, "r"))
         except:
             print("couldn't read " + configName)
+            sta_if.active(False)
             return False
 
         if not ("wifi_ssid" in config and config["wifi_ssid"]["value"]
                 and "wifi_password" in config and "value" in config["wifi_password"]):
+            sta_if.active(False)
             return False
 
         print("ssid=" + config["wifi_ssid"]["value"])
