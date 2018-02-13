@@ -18,7 +18,6 @@ deploy-common:
 	ampy put config.json
 
 deploy-wifi:
-	ampy put config_wifi.json
 	ampy put connect_to_router.py
 
 deploy-webapp:

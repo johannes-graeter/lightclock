@@ -22,7 +22,7 @@
       <h2 class="form-config-heading">Lightclock settings</h2>
 
       {% for param_name, param_data in params.items() %}
-        {% if 'html_type' in param_data %}
+        {% if 'html_type' in param_data and (not 'offline_only' in param_data or 'offline_mode' in params.keys()) %}
           <div class="form-group">
             <label for="{{ param_name }}" class="col-sm-8 control-label">
               {% if 'description' in param_data %}
