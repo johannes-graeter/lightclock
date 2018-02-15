@@ -44,6 +44,8 @@ class WebApp():
                     config_changed = True
 
             if config_changed:
+                if self.debug:
+                    print("config changed, writing to config.json")
                 config_file = open("config.json", "w")
                 config_file.write(json.dumps(config))
                 # json.dump(config, config_file) # Unfortunately not supported by ujson
@@ -84,11 +86,13 @@ class WebApp():
         file_path = request.url_match.group(1)
 
         if b"gzip" in request.headers[b"Accept-Encoding"]:
-            print("client accepts gzip")
+            if self.debug:
+                print("client accepts gzip")
             file_path_gzip = file_path + ".gz"
             import os
             if file_path_gzip in os.listdir("webapp"):
-                print("sending " + file_path_gzip)
+                if self.debug:
+                    print("sending " + file_path_gzip)
                 yield from self.app.sendfile(response, file_path_gzip, b"text/css", b"Content-Encoding: gzip\r\n"
                                                                                     b"Cache-Control: max-age=86400\r\n")
                 return
