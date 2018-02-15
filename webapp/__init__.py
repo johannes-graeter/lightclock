@@ -4,7 +4,6 @@ import ure as re
 
 
 class WebApp():
-
     def __init__(self, host, offline_mode=False, debug=True):
         self.host = host
         self.offline_mode = offline_mode
@@ -78,7 +77,6 @@ class WebApp():
         if self.debug:
             print(gc.mem_free())
 
-
     # Use gzip content encoding for speedup, if an encoded file is available
     def styles(self, request, response):
         gc.collect()
@@ -105,7 +103,5 @@ class WebApp():
         if self.debug:
             print(gc.mem_free())
 
-
     def run(self):
         self.app.run(host=self.host, debug=self.debug)
-        #self.app.run(host="192.168.4.1", debug=True) # AP_IF
