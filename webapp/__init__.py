@@ -1,12 +1,17 @@
 import gc
 import picoweb
 import ure as re
+from alarmclock.with_config import WithConfig
 
 
-class WebApp():
-    def __init__(self, host, offline_mode=False, debug=True):
+class WebApp(WithConfig):
+    def __init__(self, host, config, debug=True):
+        # init config setter
+        config_attributes = [
+        ]
+        super(WebApp, self).__init__(config_attributes, config)
+
         self.host = host
-        self.offline_mode = offline_mode
         self.debug = debug
 
         ROUTES = [
@@ -27,16 +32,12 @@ class WebApp():
         if (request.method not in ['GET', 'POST']):
             return
 
-        # Load config from json
-        import ujson as json
-        config = json.load(open("../config.json", "r"))
-
         # Save new config to json if given
         if request.method == 'POST':
             yield from request.read_form_data()
 
             config_changed = False
-            for param_name, param_data in config.items():
+            for param_name, param_data in self.config.items():
                 # Read configurable parameters, given per POST, that are not empty and differ from current config
                 if 'html_type' in param_data and request.form.get(param_name) and request.form[param_name][0] \
                         and param_data['value'] != request.form[param_name][0]:
@@ -44,10 +45,12 @@ class WebApp():
                     config_changed = True
 
             if config_changed:
+                import ujson as json
+
                 if self.debug:
                     print("config changed, writing to config.json")
                 config_file = open("config.json", "w")
-                config_file.write(json.dumps(config))
+                config_file.write(json.dumps(self.config))
                 # json.dump(config, config_file) # Unfortunately not supported by ujson
                 config_file.close()
 
@@ -67,13 +70,10 @@ class WebApp():
 
         # print(gc.mem_free())
 
-        if self.offline_mode:
-            config['offline_mode'] = {'value': True}
-
-        for s in template(config):
+        for s in template(self.config):
             yield from response.awrite(s)
 
-        del config, template_loader, template, s
+        del template_loader, template, s
         gc.collect()
         if self.debug:
             print(gc.mem_free())
