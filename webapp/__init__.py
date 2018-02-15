@@ -37,8 +37,9 @@ class WebApp():
 
             config_changed = False
             for param_name, param_data in config.items():
-                # Read configurable parameters, given per POST, that are not empty
-                if 'html_type' in param_data and request.form.get(param_name) and request.form[param_name][0]:
+                # Read configurable parameters, given per POST, that are not empty and differ from current config
+                if 'html_type' in param_data and request.form.get(param_name) and request.form[param_name][0] \
+                        and param_data['value'] != request.form[param_name][0]:
                     param_data['value'] = request.form[param_name][0]
                     config_changed = True
 
