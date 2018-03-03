@@ -63,6 +63,7 @@ timeSetter = ts.TimeSetter(config)
 # fan manager
 fanOn = Fan(config, Fan.ON)
 fanOff = Fan(config, Fan.OFF)
+fanOff.process_once()
 
 # set alarm
 # TODO set fanOff as postaction, when light shuts down again

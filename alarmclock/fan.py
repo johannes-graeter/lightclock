@@ -21,5 +21,5 @@ class Fan(WithConfig):
     def __del__(self):
         self.fan_pin.value(Fan.OFF)
 
-    def process_once(self, dt):
+    def process_once(self, dt=None):
         self.fan_pin.value(self.action)
