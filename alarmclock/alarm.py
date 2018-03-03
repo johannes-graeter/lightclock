@@ -30,6 +30,7 @@ class Alarm(WithConfig):
         # init config setter
         config_attributes = [
             'alarmtime',
+            'sunrise_time_sec',
             'verbose'
         ]
         super(Alarm, self).__init__(config_attributes, config)
@@ -94,5 +95,5 @@ class Alarm(WithConfig):
 
         # if the time difference is smaller sunrise time, this means we should adjust the light corresponding to dt
         # otherwise we sleep and get ntp time
-        if 0. < dt < float(self.action.config['sunrise_time_sec']['value']):
+        if 0. < dt < float(self.config['sunrise_time_sec']['value']):
             self.action.process_once(dt)
