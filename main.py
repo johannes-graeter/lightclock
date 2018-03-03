@@ -93,7 +93,8 @@ try:
     sta_if = network.WLAN(network.STA_IF)
 
     if sta_if.isconnected():
-        config['offline_mode'] = {'value': False}
+        if 'offline_mode' in config.keys():
+            del config['offline_mode']
         app = webapp.WebApp(host=sta_if.ifconfig()[0], config=config, debug=config["verbose"]["value"])
     else:
         # TODO add possibility to set the time in the webapp
