@@ -19,7 +19,7 @@ def main():
     s = clock_actions.StringPrinter("rise sun!", config)
 
     # set alarm
-    alarm = a.Alarm(s, config)
+    alarm = a.Alarm([s], config)
 
     while True:
         alarm.spin_once()

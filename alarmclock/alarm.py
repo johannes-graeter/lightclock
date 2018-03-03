@@ -19,14 +19,14 @@ class Alarm(WithConfig):
             action(custom obj with a function process() defined): action that will be performed when the alarm goes off
             time setter(custom obj with a function process() defined): set current system time
         Attributes:
-            action (...): action that will be performed when the alarm goes off
+            actions (...): actions that will be performed when the alarm goes off
             wakingTime (tuple): hour, minutes and seconds of the time to wake up
             sleepTimeSec (int): time in seconds to sleep after each loop while spinning
             actionPreponeTimeMin (int): time in minutes before wakingTime at which action will be triggered
             filename (str): path to file where the alarmtime is saved in the format "%02i:%02i:%02f"%(hour,minutes,seconds)
     """
 
-    def __init__(self, action, config):
+    def __init__(self, actions, config):
         # init config setter
         config_attributes = [
             'alarmtime',
@@ -37,7 +37,7 @@ class Alarm(WithConfig):
 
         # inputs
         # action to trigger
-        self.action = action
+        self.actions = actions
 
         # time in minutes before action should start
         self.actionPreponeTimeMin = 30
@@ -96,4 +96,5 @@ class Alarm(WithConfig):
         # if the time difference is smaller sunrise time, this means we should adjust the light corresponding to dt
         # otherwise we sleep and get ntp time
         if 0. < dt < float(self.config['sunrise_time_sec']['value']):
-            self.action.process_once(dt)
+            for action in self.actions:
+                action.process_once(dt)

@@ -60,7 +60,7 @@ s.set_exp_vars(5., 3.5)
 timeSetter = ts.TimeSetter(config)
 
 # set alarm
-alarm = a.Alarm(s, config)
+alarm = a.Alarm([s], config)
 
 # don't prepone for debugging
 alarm.set_action_prepone_time_min(0.)
