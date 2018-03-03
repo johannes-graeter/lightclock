@@ -26,7 +26,7 @@ class Sunrise(WithConfig):
         config_attributes = [
             'max_intensity_percent',
             'sunrise_time_sec',
-            'led_number'
+            'led_pin'
         ]
         super(Sunrise, self).__init__(config_attributes, config)
 
@@ -64,7 +64,7 @@ class Sunrise(WithConfig):
     def process_once(self, dt):
         # print("start sunrise")
         # select led
-        led = machine.PWM(machine.Pin(self.config['led_number']['value'], machine.Pin.OUT), freq=20000)
+        led = machine.PWM(machine.Pin(self.config['led_pin']['value'], machine.Pin.OUT), freq=20000)
 
         # intensity from profile ->strategy pattern
         intensity = int(self.intensityProfile(dt))

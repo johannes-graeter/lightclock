@@ -8,5 +8,5 @@
     "verbose": {"value": true},
     "period_alarm_ms": {"value": 1000},
     "period_get_ntp_time_ms": {"value": 30000},
-    "led_number": {"value": 15}
+    "led_pin": {"value": 15}
 }

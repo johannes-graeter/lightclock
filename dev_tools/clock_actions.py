@@ -17,7 +17,7 @@ class StringPrinter(WithConfig):
         config_attributes = [
             'max_intensity_percent',
             'sunrise_time_sec',
-            'led_number'
+            'led_pin'
         ]
         super().__init__(config_attributes, config)
 
