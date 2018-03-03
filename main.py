@@ -66,7 +66,10 @@ fanOff = Fan(config, Fan.OFF)
 
 # set alarm
 # TODO set fanOff as postaction, when light shuts down again
-alarm = a.Alarm([s, fanOn], config, preactions=[fanOff])
+if 'fan_pin' in config.keys():
+    alarm = a.Alarm([s, fanOn], config, preactions=[fanOff])
+else:
+    alarm = a.Alarm([s], config)
 
 # don't prepone for debugging
 alarm.set_action_prepone_time_min(0.)
