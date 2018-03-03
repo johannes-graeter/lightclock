@@ -63,6 +63,14 @@ Tested with HUZZAH ESP8266 Feather.
     * install ampy: `sudo pip2 install adafruit-ampy`
     * deploy: `make deploy-without-modules` (it takes a while!)
 
+3. Add temperature sensor support:
+    * clone [mcp9808](https://github.com/patvdleer/micropython-mcp9808) to your workspace
+    * link to it in the `micropython/ports/esp8266/modules` folder using a soft link:
+      ```
+      cd <path/to>/micropython/ports/esp8266/modules
+      ln -s <path/to>/mcp9808/mcp9808.py .
+      ```
+
 4. Finalize
     * You will need to configure your private configs. Therefore put the following files into your root directory:
         * `config_wifi.json` where you put the data of your network in the following format, static_ip is the ip which the controller will have at startup:

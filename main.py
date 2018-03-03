@@ -11,6 +11,7 @@ from alarmclock import alarm as a
 from alarmclock import clock_actions_micropython as ca
 from alarmclock import time_setter as ts
 from alarmclock.fan import Fan
+from alarmclock.temperature_sensor import TemperatureLogger
 
 gc.collect()
 print('loading webapp, free memory = ', gc.mem_free())
@@ -65,12 +66,15 @@ fanOn = Fan(config, Fan.ON)
 fanOff = Fan(config, Fan.OFF)
 fanOff.process_once()
 
+# temperature sensor
+temp = TemperatureLogger(config)
+
 # set alarm
 # TODO set fanOff as postaction, when light shuts down again
 if 'fan_pin' in config.keys():
-    alarm = a.Alarm([s, fanOn], config, preactions=[fanOff])
+    alarm = a.Alarm([s, fanOn, temp], config, preactions=[fanOff])
 else:
-    alarm = a.Alarm([s], config)
+    alarm = a.Alarm([s, temp], config)
 
 # don't prepone for debugging
 alarm.set_action_prepone_time_min(0.)
@@ -128,4 +132,4 @@ except KeyboardInterrupt:
     if sta_if:
         sta_if.active(False)
 
-    del fanOn, fanOff
+    del fanOn, fanOff, temp

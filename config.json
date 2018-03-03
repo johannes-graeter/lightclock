@@ -9,5 +9,7 @@
     "period_alarm_ms": {"value": 1000},
     "period_get_ntp_time_ms": {"value": 30000},
     "led_pin": {"value": 15},
-    "fan_pin": {"value": 13}
+    "fan_pin": {"value": 13},
+    "sdl_pin": {"value": 5},
+    "sda_pin": {"value": 4}
 }
