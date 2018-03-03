@@ -10,6 +10,7 @@ print('loading alarm clock, free memory = ', gc.mem_free())
 from alarmclock import alarm as a
 from alarmclock import clock_actions_micropython as ca
 from alarmclock import time_setter as ts
+from alarmclock.fan import Fan
 
 gc.collect()
 print('loading webapp, free memory = ', gc.mem_free())
@@ -59,8 +60,13 @@ s.set_exp_vars(5., 3.5)
 # time zone manager
 timeSetter = ts.TimeSetter(config)
 
+# fan manager
+fanOn = Fan(config, Fan.ON)
+fanOff = Fan(config, Fan.OFF)
+
 # set alarm
-alarm = a.Alarm([s], config)
+# TODO set fanOff as postaction, when light shuts down again
+alarm = a.Alarm([s, fanOn], config, preactions=[fanOff])
 
 # don't prepone for debugging
 alarm.set_action_prepone_time_min(0.)

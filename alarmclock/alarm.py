@@ -28,7 +28,7 @@ class Alarm(WithConfig):
             filename (str): path to file where the alarmtime is saved in the format "%02i:%02i:%02f"%(hour,minutes,seconds)
     """
 
-    def __init__(self, actions, config, preactions=None, postactions=None):
+    def __init__(self, actions, config, preactions=[], postactions=[]):
         # init config setter
         config_attributes = [
             'alarmtime',
