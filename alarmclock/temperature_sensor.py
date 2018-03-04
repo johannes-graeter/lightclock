@@ -7,13 +7,16 @@ from alarmclock.with_config import WithConfig
 
 class TemperatureSensor(WithConfig):
 
-    def __init__(self, config):
+    def __init__(self, config, extra_config_attributes=None):
         # init config setter
         config_attributes = [
             'sdl_pin',
             'sda_pin',
             'verbose'
         ]
+        if extra_config_attributes:
+            config_attributes += extra_config_attributes
+
         super(TemperatureSensor, self).__init__(config_attributes, config)
 
         self.i2c = I2C(scl=Pin(self.config['sdl_pin']['value']), sda=Pin(self.config['sda_pin']['value']), freq=10000)
@@ -24,12 +27,6 @@ class TemperatureSensor(WithConfig):
         except Exception:
             self.is_functional = False
             print("Failed to initialize temperature sensor! Broken connection?")
-
-        self.logfile = open("temp_log.csv", "w")
-        self.logfile.write("#time,temp\n")
-
-    def __del__(self):
-        self.logfile.close()
 
     def measure_temp(self):
         if self.mcp:
@@ -50,10 +47,25 @@ class TemperatureSensor(WithConfig):
 
 class TemperatureLogger(TemperatureSensor):
 
-    def process_once(self, dt):
+    def __init__(self, config):
+        config_attributes = [
+            'temp_log_file'
+        ]
+        super(TemperatureLogger, self).__init__(config, extra_config_attributes=config_attributes)
+
+        logfile = open(self.config['temp_log_file']['value'], "w")
+        logfile.write("#time,temp\n")
+        logfile.close()
+
+    def main_action(self, dt):
         temp, frac = self.measure_temp()
 
+
+        logfile = open(self.config['temp_log_file']['value'], "a")
+
         if not self.is_functional:
-            self.logfile.write("{:d},NA\n".format(time.time()))
+            logfile.write("{:d},NA\n".format(time.time()))
         else:
-            self.logfile.write("{:d},{:d}.{:d}\n".format(time.time(), temp, frac))
+            logfile.write("{:d},{:d}.{:d}\n".format(time.time(), temp, frac))
+
+        logfile.close()

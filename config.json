@@ -11,5 +11,6 @@
     "led_pin": {"value": 15},
     "fan_pin": {"value": 13},
     "sdl_pin": {"value": 5},
-    "sda_pin": {"value": 4}
+    "sda_pin": {"value": 4},
+    "temp_log_file": {"value": "temp_log.csv"}
 }
