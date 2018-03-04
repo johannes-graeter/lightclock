@@ -18,8 +18,5 @@ class Fan(WithConfig):
         self.action = action
         self.fan_pin = machine.Pin(self.config['fan_pin']['value'], machine.Pin.OUT)
 
-    def __del__(self):
-        self.fan_pin.value(Fan.OFF)
-
     def process_once(self, dt=None):
         self.fan_pin.value(self.action)

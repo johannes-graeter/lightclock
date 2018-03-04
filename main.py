@@ -132,4 +132,4 @@ except KeyboardInterrupt:
     if sta_if:
         sta_if.active(False)
 
-    del fanOn, fanOff, temp
+    fanOff.process_once()
