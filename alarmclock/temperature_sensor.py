@@ -31,10 +31,7 @@ class TemperatureSensor(WithConfig):
     def __del__(self):
         self.logfile.close()
 
-
-class TemperatureLogger(TemperatureSensor):
-
-    def process_once(self, dt):
+    def measure_temp(self):
         if self.mcp:
             try:
                 temp, frac = self.mcp.get_temp_int()
@@ -42,12 +39,21 @@ class TemperatureLogger(TemperatureSensor):
                 if self.config['verbose']['value']:
                     print ("Temperature is: {:d}.{:d}".format(temp, frac))
 
-                self.logfile.write("{:d},{:d}.{:d}\n".format(time.time(), temp, frac))
+                return temp, frac
+
             except Exception:
+                if self.config['verbose']['value']:
+                    print ("Temperature reading failed!")
+
                 self.is_functional = False
 
-        if not self.is_functional:
-            if self.config['verbose']['value']:
-                print ("Temperature reading failed!")
 
+class TemperatureLogger(TemperatureSensor):
+
+    def process_once(self, dt):
+        temp, frac = self.measure_temp()
+
+        if not self.is_functional:
             self.logfile.write("{:d},NA\n".format(time.time()))
+        else:
+            self.logfile.write("{:d},{:d}.{:d}\n".format(time.time(), temp, frac))
