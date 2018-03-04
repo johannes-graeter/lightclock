@@ -81,16 +81,6 @@ class Alarm(WithConfig):
 
         return expectedTime
 
-    def start(self):
-        """test if current time is waking time - preponeTime"""
-        # get current time
-        tm = time.localtime()
-
-        # convert time to seconds, if the time diff is between negative threshold and zero start
-        timeDiffSec = self.get_expected_time(tm) - time.mktime(tm)
-
-        return -300. <= timeDiffSec <= 0.
-
     def spin_once(self):
         # get start time corresponding to alarmtime
         startTime = self.get_expected_time(time.localtime())
