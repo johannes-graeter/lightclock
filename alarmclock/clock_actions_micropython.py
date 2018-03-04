@@ -45,22 +45,6 @@ class Sunrise(WithConfig):
         """
         self.intensityProfile = func
 
-    def process(self):
-        # save time at beginning
-        beginTime = time.time()
-
-        # run sunrise
-        dt = 0.
-        while float(self.config['sunrise_time_sec']['value']) - dt > 0.:
-            # set new dt
-            dt = time.time() - beginTime
-
-            # process one step
-            self.process_once(dt)
-
-            # delay a bit
-            time.sleep_ms(self.delayMs)
-
     def process_once(self, dt):
         # print("start sunrise")
         # select led
