@@ -57,22 +57,30 @@ machine.PWM(machine.Pin(0, machine.Pin.OUT), freq=20000).duty(1024)
 # create instance of sunrise which will be launched by alarm at the correct time
 s = ca.SunriseExp(config)
 s.set_exp_vars(5., 3.5)
+actions = [s]
 
 # time zone manager
 timeSetter = ts.TimeSetter(config)
 
 # fan manager
-fan = Fan(config)
-fan.pre_action()
+fan = None
+try:
+    fan = Fan(config)
+    fan.pre_action()
+    actions.append(fan)
+except:
+    print("No Fan loaded!")
 
 # temperature sensor
-temp = TemperatureLogger(config)
+temp_sensor = None
+try:
+    temp_sensor = TemperatureLogger(config)
+    actions.append(temp_sensor)
+except:
+    print("No TemperatureLogger loaded!")
 
 # set alarm
-if 'fan_pin' in config.keys():
-    alarm = a.Alarm([s, fan, temp], config)
-else:
-    alarm = a.Alarm([s, temp], config)
+alarm = a.Alarm(actions, config)
 
 # don't prepone for debugging
 alarm.set_action_prepone_time_min(0.)
@@ -130,4 +138,5 @@ except KeyboardInterrupt:
     if sta_if:
         sta_if.active(False)
 
-    fan.post_action()
+    if fan:
+        fan.post_action()
