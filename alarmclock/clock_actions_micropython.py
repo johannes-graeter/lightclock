@@ -45,7 +45,11 @@ class Sunrise(WithConfig):
         """
         self.intensityProfile = func
 
-    def process_once(self, dt):
+    def pre_action(self, dt):
+        led = machine.PWM(machine.Pin(self.config['led_pin']['value'], machine.Pin.OUT), freq=20000)
+        led.duty(0)
+
+    def main_action(self, dt):
         # print("start sunrise")
         # select led
         led = machine.PWM(machine.Pin(self.config['led_pin']['value'], machine.Pin.OUT), freq=20000)
@@ -59,6 +63,9 @@ class Sunrise(WithConfig):
         # set intensity with bandwidth modulation pulsing, max duty val is 1023, led for pin 0 is on when pin.value()==0
         led.duty(int(intensity * 1023 / 100))
 
+    def post_action(self, dt):
+        led = machine.PWM(machine.Pin(self.config['led_pin']['value'], machine.Pin.OUT), freq=20000)
+        led.duty(0)
 
 class SunriseExp(Sunrise):
     """overload intensity Profile

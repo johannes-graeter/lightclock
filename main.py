@@ -62,17 +62,15 @@ s.set_exp_vars(5., 3.5)
 timeSetter = ts.TimeSetter(config)
 
 # fan manager
-fanOn = Fan(config, Fan.ON)
-fanOff = Fan(config, Fan.OFF)
-fanOff.process_once()
+fan = Fan(config)
+fan.pre_action()
 
 # temperature sensor
 temp = TemperatureLogger(config)
 
 # set alarm
-# TODO set fanOff as postaction, when light shuts down again
 if 'fan_pin' in config.keys():
-    alarm = a.Alarm([s, fanOn, temp], config, preactions=[fanOff])
+    alarm = a.Alarm([s, fan, temp], config)
 else:
     alarm = a.Alarm([s, temp], config)
 
@@ -132,4 +130,4 @@ except KeyboardInterrupt:
     if sta_if:
         sta_if.active(False)
 
-    fanOff.process_once()
+    fan.post_action()
