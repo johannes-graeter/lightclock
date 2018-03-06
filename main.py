@@ -11,7 +11,7 @@ from alarmclock import alarm as a
 from alarmclock import clock_actions_micropython as ca
 from alarmclock import time_setter as ts
 from alarmclock.fan import Fan
-from alarmclock.temperature_sensor import TemperatureLogger
+from alarmclock.temperature_sensor import TemperatureLogger, TemperatureWatcher
 
 gc.collect()
 print('loading webapp, free memory = ', gc.mem_free())
@@ -78,6 +78,15 @@ try:
     actions.append(temp_sensor)
 except:
     print("No TemperatureLogger loaded!")
+
+# temperature watcher
+temp_watcher = None
+try:
+    temp_watcher = TemperatureWatcher(config, s, fan)
+    actions.append(temp_watcher)
+except:
+    print("No TemperatureWatcher loaded!")
+
 
 # set alarm
 alarm = a.Alarm(actions, config)

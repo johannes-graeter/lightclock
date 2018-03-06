@@ -32,6 +32,7 @@ class Sunrise(WithConfig):
 
         # default profile is linear
         self.intensityProfile = lambda x: 50 + x / float(self.config['sunrise_time_sec']['value']) * 205
+        self.duty_override = None
 
         # led delay in millisec
         self.delayMs = 1
@@ -45,6 +46,14 @@ class Sunrise(WithConfig):
         """
         self.intensityProfile = func
 
+    def set_duty_override(self, duty):
+        led = machine.PWM(machine.Pin(self.config['led_pin']['value'], machine.Pin.OUT), freq=20000)
+        self.duty_override = duty
+        led.duty(duty)
+
+    def reset_duty_override(self):
+        self.duty_override = None
+
     def pre_action(self, dt):
         led = machine.PWM(machine.Pin(self.config['led_pin']['value'], machine.Pin.OUT), freq=20000)
         led.duty(0)
@@ -54,14 +63,20 @@ class Sunrise(WithConfig):
         # select led
         led = machine.PWM(machine.Pin(self.config['led_pin']['value'], machine.Pin.OUT), freq=20000)
 
-        # intensity from profile ->strategy pattern
-        intensity = int(self.intensityProfile(dt))
-        # get valid range of intensity
-        intensity = max(intensity, 0)
-        intensity = min(intensity, self.get_max_intensity_percent())
+        if self.duty_override != None:
+            duty = self.duty_override
 
-        # set intensity with bandwidth modulation pulsing, max duty val is 1023, led for pin 0 is on when pin.value()==0
-        led.duty(int(intensity * 1023 / 100))
+        else:
+            # intensity from profile ->strategy pattern
+            intensity = int(self.intensityProfile(dt))
+            # get valid range of intensity
+            intensity = max(intensity, 0)
+            intensity = min(intensity, self.get_max_intensity_percent())
+
+            # set intensity with bandwidth modulation pulsing, max duty val is 1023, led for pin 0 is on when pin.value()==0
+            duty = int(intensity * 1023 / 100)
+
+        led.duty(duty)
 
     def post_action(self, dt):
         led = machine.PWM(machine.Pin(self.config['led_pin']['value'], machine.Pin.OUT), freq=20000)

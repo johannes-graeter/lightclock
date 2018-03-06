@@ -3,6 +3,7 @@ import mcp9808
 import utime as time
 
 from alarmclock.with_config import WithConfig
+from alarmclock.fan import Fan
 
 
 class TemperatureSensor(WithConfig):
@@ -32,6 +33,7 @@ class TemperatureSensor(WithConfig):
         if self.mcp:
             try:
                 temp, frac = self.mcp.get_temp_int()
+                self.is_functional = True
 
                 if self.config['verbose']['value']:
                     print ("Temperature is: {:d}.{:d}".format(temp, frac))
@@ -60,7 +62,6 @@ class TemperatureLogger(TemperatureSensor):
     def main_action(self, dt):
         temp, frac = self.measure_temp()
 
-
         logfile = open(self.config['temp_log_file']['value'], "a")
 
         if not self.is_functional:
@@ -69,3 +70,55 @@ class TemperatureLogger(TemperatureSensor):
             logfile.write("{:d},{:d}.{:d}\n".format(time.time(), temp, frac))
 
         logfile.close()
+
+
+class TemperatureWatcher(TemperatureSensor):
+
+    def __init__(self, config, led_control, fan_control):
+        config_attributes = [
+            'shutdown_temp',
+            'shutdown_hysteresis'
+        ]
+        super(TemperatureWatcher, self).__init__(config, extra_config_attributes=config_attributes)
+
+        self.led_control = led_control
+        self.fan_control = fan_control
+        self.temp = None
+
+    def pre_action(self, dt):
+        if self.led_control.duty_override != None:
+
+            self.temp, frac = self.measure_temp()
+
+            if not self.is_functional:
+                self._shutdown_led()
+
+            elif self.temp < int(self.config['shutdown_temp']['value']) - int(self.config['shutdown_hysteresis']['value']):
+                self._reset_led()
+
+    def main_action(self, dt):
+        self.temp, frac = self.measure_temp()
+
+        if not self.is_functional:
+            self._shutdown_led()
+
+        elif self.temp >= int(self.config['shutdown_temp']['value']):
+            self._shutdown_led()
+
+        # Add hysteresis of 2 degree
+        elif self.led_control.duty_override != None \
+                and self.temp < int(self.config['shutdown_temp']['value']) - int(self.config['shutdown_hysteresis']['value']):
+            self._reset_led()
+
+    def post_action(self, dt):
+        self.pre_action(dt)
+
+    def _shutdown_led(self):
+        print("WARNING! Danger of overheating! Shutting down the LED...")
+        self.led_control.set_duty_override(0)
+        self.fan_control.set_state_override(Fan.ON)
+
+    def _reset_led(self):
+        print("Overheating in control, resetting LED override")
+        self.led_control.reset_duty_override()
+        self.fan_control.reset_state_override()
