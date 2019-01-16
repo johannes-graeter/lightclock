@@ -10,7 +10,7 @@ from connect_to_router import *
 gc.collect()
 
 # connect to router, config has fields ssid and password, optional: static_ip
-do_connect("./config.json", 5000)
+do_connect("./config.json", 10000)
 
 gc.collect()
 print("free memory:", gc.mem_free())
