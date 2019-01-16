@@ -3,16 +3,16 @@ deploy:
 	make deploy-wifi
 	make deploy-webapp
 	make deploy-alarm
-	ampy put boot.py
 	ampy put main.py
+	ampy put boot.py
 
 deploy-without-modules:
 	make deploy-common
 	make deploy-wifi
 	make deploy-webapp-static
 	make deploy-webapp-templates
-	ampy put boot.py
 	ampy put main.py
+	ampy put boot.py
 
 deploy-common:
 	ampy put config.json
@@ -26,10 +26,12 @@ deploy-webapp:
 	ampy put webapp
 
 deploy-webapp-static:
-	ampy put webapp_static webapp
+	ampy mkdir webapp
+	find webapp_static -name "*.gz" -print0 | sed 's/webapp_static\///g' | xargs -0 -I % ampy put webapp_static/% webapp/%
 
 deploy-webapp-templates:
-	ampy put webapp_templates
+	ampy mkdir webapp_templates
+	find webapp_templates -name "*.py" -print0 | xargs -0 -I % ampy put % %
 
 deploy-alarm:
 	ampy put alarmclock
