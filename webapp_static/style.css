@@ -20,6 +20,13 @@ body {
   margin-bottom: 25px;
   text-align: center;
 }
+.form-config .form-config-heading a {
+    color: black;
+}
+.form-config .form-config-heading .glyphicon {
+    font-size: 70%;
+    padding-left: 10px;
+}
 .form-config .form-config-submit {
   margin: 20px auto;
   width: 80%;
