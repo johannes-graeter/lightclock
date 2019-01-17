@@ -1,6 +1,7 @@
 import gc
 import picoweb
 import ure as re
+import utime as time
 from alarmclock.with_config import WithConfig
 
 
@@ -69,6 +70,8 @@ class WebApp(WithConfig):
         # yield from app.render_template(response, "config.html", config)
 
         # print(gc.mem_free())
+
+        self.config['current_time'] = {'value': time.localtime()}
 
         for s in template(self.config):
             yield from response.awrite(s)

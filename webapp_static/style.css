@@ -4,9 +4,16 @@ body {
   background-color: #eee;
 }
 
+.current-time {
+    margin: 75px auto;
+    text-align: center;
+    font-size: 4em;
+    font-weight: bold;
+}
+
 .form-config {
     max-width: 330px;
-    padding: 15px;
+    padding: 0 15px 15px 15px;
     margin: 0 auto;
 }
 .form-config .form-config-heading {
