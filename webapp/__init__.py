@@ -51,8 +51,7 @@ class WebApp(WithConfig):
                 if self.debug:
                     print("config changed, writing to config.json")
                 config_file = open("config.json", "w")
-                config_file.write(json.dumps(self.config))
-                # json.dump(config, config_file) # Unfortunately not supported by ujson
+                json.dump(self.config, config_file)
                 config_file.close()
 
             del config_changed, param_name, param_data
