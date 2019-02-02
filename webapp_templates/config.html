@@ -74,7 +74,10 @@
   {% endif %}
   <script src="bootstrap-clockpicker.min.js"></script>
   <script type="text/javascript">
-    $('.clockpicker').clockpicker();
+    $('.clockpicker').clockpicker()
+        .find('input').change(function(){
+            $("form").submit();
+        });
   </script>
 </body>
 </html>
