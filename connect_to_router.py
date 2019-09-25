@@ -31,6 +31,7 @@ def do_connect(configName, timeout):
             machine.idle()
 
             if time.ticks_diff(time.ticks_ms(), start_time) > timeout:
+                print("-")
                 print("connecting timed out, stop reconnecting")
                 sta_if.active(False)
                 return False
