@@ -38,9 +38,7 @@ deploy-alarm:
 
 erase:
 	ampy rm config.json
-	ampy rm config_wifi.json
 	ampy rm connect_to_router.py
-	ampy rmdir webapp_static
 	ampy rmdir webapp_templates
 	ampy rmdir webapp
 	ampy rmdir alarmclock
