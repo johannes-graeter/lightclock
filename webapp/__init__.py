@@ -106,6 +106,10 @@ class WebApp(WithConfig):
         gc.collect()
 
         file_path = request.url_match.group(1)
+        if file_path[-2:] == 'js':
+            content_type = b"application/javascript"
+        else:
+            content_type = b"text/css"
 
         if b"gzip" in request.headers[b"Accept-Encoding"]:
             if self.debug:
@@ -115,14 +119,13 @@ class WebApp(WithConfig):
             if file_path_gzip in os.listdir("webapp"):
                 if self.debug:
                     print("sending " + file_path_gzip)
-                yield from self.app.sendfile(response, file_path_gzip, b"text/css", b"Content-Encoding: gzip\r\n"
-                                                                                    b"Cache-Control: max-age=86400\r\n")
-                return
-
-            yield from self.app.sendfile(response, file_path, b"text/css", b"Cache-Control: max-age=86400\r\n")
+                yield from self.app.sendfile(response, file_path_gzip, content_type, b"Content-Encoding: gzip\r\n"
+                                                                                     b"Cache-Control: max-age=86400\r\n")
             del file_path_gzip
+        else:
+            yield from self.app.sendfile(response, file_path, content_type, b"Cache-Control: max-age=86400\r\n")
 
-        del file_path
+        del content_type, file_path
         gc.collect()
         if self.debug:
             print(gc.mem_free())
