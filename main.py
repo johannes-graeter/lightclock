@@ -98,7 +98,7 @@ gc.collect()
 print('set ntp-time, free memory = ', gc.mem_free())
 
 # set ntp-time
-timeSetter.process(1000)
+timeSetter.process(5000)
 
 def spin_and_collect(timer):
     alarm.spin_once()
