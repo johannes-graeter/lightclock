@@ -51,7 +51,11 @@ Tested with HUZZAH ESP8266 Feather.
     see also [detailed instructions here](https://learn.adafruit.com/micropython-basics-loading-modules/frozen-modules)
 
 3. Deploy the freshly built firmware:
-    * as with normal micropython firmware, erase and write the flash as described in the [micropython install instructions](https://docs.micropython.org/en/latest/esp8266/esp8266/tutorial/intro.html) using the freshly build firmware `build/firmware-combined.bin` 
+    * as with normal micropython firmware, erase and write the flash as described in the [micropython install instructions](https://docs.micropython.org/en/latest/esp8266/esp8266/tutorial/intro.html) using the freshly build firmware `build/firmware-combined.bin`:
+    ```
+    esptool.py --port /dev/ttyUSB0 erase_flash
+    esptool.py --port /dev/ttyUSB0 --baud 460800 write_flash --flash_size=detect 0 build/firmware-combined.bin
+    ```
 
 3. Build webapp content
     * clone [utemplate](https://github.com/pfalcon/utemplate) to your workspace
