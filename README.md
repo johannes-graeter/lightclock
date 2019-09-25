@@ -30,6 +30,7 @@ Tested with HUZZAH ESP8266 Feather.
       ```
       cd micropython/ports/esp8266/modules
       rm -r pkg_resources.py uasyncio
+      ln -s <path/to>/micropython-lib/logging/logging.py .
       ln -s <path/to>/micropython-lib/pkg_resources/pkg_resources.py .
       mkdir uasyncio
       ln -s <path/to>/micropython-lib/uasyncio/uasyncio/__init__.py uasyncio/
