@@ -42,7 +42,10 @@ class WebApp(WithConfig):
                 # Read configurable parameters, given per POST, that are not empty and differ from current config
                 if 'html_type' in param_data and request.form.get(param_name) and request.form[param_name][0] \
                         and param_data['value'] != request.form[param_name][0]:
-                    param_data['value'] = request.form[param_name][0]
+                    if param_data['html_type'] == 'number':
+                        param_data['value'] = int(request.form[param_name][0])
+                    else:
+                        param_data['value'] = request.form[param_name][0]
                     config_changed = True
 
             if config_changed:
