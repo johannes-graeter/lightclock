@@ -37,6 +37,24 @@ class WebApp(WithConfig):
         if request.method == 'POST':
             yield from request.read_form_data()
 
+            # update clock of controller, if utc_delay has been changed (instead of waiting for ntp update)
+            if request.form.get('utc_delay') and request.form['utc_delay'][0] != '':
+                if int(request.form['utc_delay'][0]) != self.config['utc_delay']['value']:
+                    utc_diff = int(request.form['utc_delay'][0]) - self.config['utc_delay']['value']
+                    tm = time.localtime()
+                    tm_sec = time.mktime(
+                        (tm[0], tm[1], tm[2], tm[3] + utc_diff, tm[4], tm[5], 0, 0))
+                    tm = time.localtime(tm_sec)
+
+                    # convert to format for rtc
+                    tm = tm[0:3] + (0,) + tm[3:6] + (0,)
+                    # set real time clock on controller
+                    import machine
+                    machine.RTC().datetime(tm)
+                    print("new utc delay given, current time set to:")
+                    print(time.localtime())
+                    del tm_sec, tm, utc_diff
+
             config_changed = False
             for param_name, param_data in self.config.items():
                 # Read configurable parameters, given per POST, that are not empty and differ from current config
