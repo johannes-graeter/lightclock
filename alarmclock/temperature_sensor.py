@@ -60,7 +60,16 @@ class TemperatureLogger(TemperatureSensor):
         logfile.write("#time,temp\n")
         logfile.close()
 
+    def pre_action(self, dt):
+        self._measure_and_log_temp()
+
     def main_action(self, dt):
+        self._measure_and_log_temp()
+
+    def post_action(self, dt):
+        self._measure_and_log_temp()
+
+    def _measure_and_log_temp(self):
         temp, frac = self.measure_temp()
 
         if uos.stat('temp_log.csv')[6] > self.config['temp_log_file_max_bytes']['value']:
