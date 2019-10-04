@@ -1,4 +1,5 @@
 import math
+from alarmclock.with_config import WithConfig
 
 try:
     import machine
@@ -7,7 +8,7 @@ except:
     print("using ubuntu testing version")
 
 
-class Sunrise(object):
+class Sunrise(WithConfig):
     """interface class to do a sunrise with specified intensity profile
         Args:
 
@@ -20,24 +21,24 @@ class Sunrise(object):
             delayMs (float): delay in milliseconds after each intensity modification
     """
 
-    def __init__(self):
-        # max intensity
-        self.maxIntensityPercent = 100
-
-        # rise time
-        self.sunriseTimeSec = 60. * 30.
+    def __init__(self, config):
+        # init config setter
+        config_attributes = [
+            'max_intensity_percent',
+            'sunrise_time_sec',
+            'led_pin'
+        ]
+        super(Sunrise, self).__init__(config_attributes, config)
 
         # default profile is linear
-        self.intensityProfile = lambda x: 50 + x / self.sunriseTimeSec * 205
-
-        # GPIO number of led
-        self.ledNum = 0
+        self.intensityProfile = lambda x: 50 + x / float(self.config['sunrise_time_sec']['value']) * 205
+        self.duty_override = None
 
         # led delay in millisec
         self.delayMs = 1
 
-    def set_max_intensity_percent(self, maxIntensityPerc):
-        self.maxIntensityPercent = min(int(maxIntensityPerc), 100)
+    def get_max_intensity_percent(self):
+        return min(float(self.config['max_intensity_percent']['value']), 100)
 
     def set_intensity_profile(self, func):
         """setter for the intensity profile function
@@ -45,38 +46,41 @@ class Sunrise(object):
         """
         self.intensityProfile = func
 
-    def set_sunrise_time(self, tSec):
-        self.sunriseTimeSec = tSec
+    def set_duty_override(self, duty):
+        led = machine.PWM(machine.Pin(self.config['led_pin']['value'], machine.Pin.OUT), freq=20000)
+        self.duty_override = duty
+        led.duty(duty)
 
-    def set_led_num(self, num):
-        self.ledNum = num
+    def reset_duty_override(self):
+        self.duty_override = None
 
-    def process(self):
+    def pre_action(self, dt):
+        led = machine.PWM(machine.Pin(self.config['led_pin']['value'], machine.Pin.OUT), freq=20000)
+        led.duty(0)
+
+    def main_action(self, dt):
         # print("start sunrise")
         # select led
-        led = machine.PWM(machine.Pin(self.ledNum, machine.Pin.OUT), freq=20000)
+        led = machine.PWM(machine.Pin(self.config['led_pin']['value'], machine.Pin.OUT), freq=20000)
 
-        # save time at beginning
-        beginTime = time.time()
+        if self.duty_override != None:
+            duty = self.duty_override
 
-        # run sunrise
-        dt = 0.
-        while self.sunriseTimeSec - dt > 0.:
+        else:
             # intensity from profile ->strategy pattern
             intensity = int(self.intensityProfile(dt))
             # get valid range of intensity
             intensity = max(intensity, 0)
-            intensity = min(intensity, self.maxIntensityPercent)
+            intensity = min(intensity, self.get_max_intensity_percent())
 
             # set intensity with bandwidth modulation pulsing, max duty val is 1023, led for pin 0 is on when pin.value()==0
-            led.duty(int(intensity*1023/100))
+            duty = int(intensity * 1023 / 100)
 
-            # delay a bit
-            time.sleep_ms(self.delayMs)
+        led.duty(duty)
 
-            # set new dt
-            dt = time.time() - beginTime
-
+    def post_action(self, dt):
+        led = machine.PWM(machine.Pin(self.config['led_pin']['value'], machine.Pin.OUT), freq=20000)
+        led.duty(0)
 
 class SunriseExp(Sunrise):
     """overload intensity Profile
@@ -87,16 +91,17 @@ class SunriseExp(Sunrise):
             dt (float): time delay in sec for exponential func
     """
 
-    def __init__(self):
+    def __init__(self, config):
         # call parent constructor
-        super(SunriseExp, self).__init__()
+        super(SunriseExp, self).__init__(config)
 
         self.a = 100.
         self.b = 1.5
         self.c = self.a
 
-        self.intensityProfile = lambda x: min(self.a * math.exp(self.b / self.sunriseTimeSec * x) - self.c,
-                                              self.maxIntensityPercent)
+        self.intensityProfile = lambda x: min(
+            self.a * math.exp(self.b / float(self.config['sunrise_time_sec']['value']) * x) - self.c,
+            self.get_max_intensity_percent())
 
     def set_exp_vars(self, a, b):
         self.a = a

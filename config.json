@@ -1,8 +1,19 @@
 {
-    "alarm_sleep_time_sec": 1.0,
-    "max_intensity_percent": 97,
-    "sunrise_time_sec": 1200.0,
-    "utc_delay": 1,
-    "verbose": true,
-    "led_number": 15
+    "alarmtime": {"html_type": "time", "value": "21:45"},
+    "max_intensity_percent": {"html_type": "number", "description": "Maximum light intensity [%]", "min": 0, "max": 100, "value": 97},
+    "sunrise_time_sec": {"html_type": "number", "description": "Time of sunrise period [s]", "min": 0, "max": 999999, "value": 1200},
+    "utc_delay": {"html_type": "number", "min": 0, "max": 24, "value": 1},
+    "shutdown_temp": {"html_type": "number", "description": "Thermal shutdown temperature [°C]", "value": 40},
+    "wifi_ssid": {"html_type": "text", "offline_only": true, "value": ""},
+    "wifi_password": {"html_type": "text", "offline_only": true, "value": ""},
+    "verbose": {"value": true},
+    "period_alarm_ms": {"value": 1000},
+    "period_get_ntp_time_ms": {"value": 30000},
+    "led_pin": {"value": 15},
+    "fan_pin": {"value": 13},
+    "sdl_pin": {"value": 5},
+    "sda_pin": {"value": 4},
+    "temp_log_file": {"value": "temp_log.csv"},
+    "temp_log_file_max_bytes": {"value": 10240},
+    "shutdown_hysteresis": {"value": 2}
 }

@@ -5,75 +5,99 @@ Tested with HUZZAH ESP8266 Feather.
 
 ## Installation
 
-* Install micropython on board <https://docs.micropython.org/en/latest/esp8266/esp8266/tutorial/intro.html> until point 1.5
-* play with the board using picocom: 
->sudo picocom /dev/ttyUSB0 -b 115200
-
-* log onto board with picicom and enable webREPL: `import webrepl_setup`
-* log off
-* download webrepl from github https://github.com/micropython/webrepl.git and start firefox webrepl.html
-
-Copy files:
-1. Offline:
+* Download the micropython firmware with our lightclock code included from the releases page.
+* Follow [micropython install instructions](https://docs.micropython.org/en/latest/esp8266/esp8266/tutorial/intro.html) until point 1.5, but use our firmware bin instead.
+* Deploy remaining webapp content etc. (from the release) to the board:
     * install ampy: `sudo pip2 install adafruit-ampy`
-    * use ampy to put the files on the board as described here
-    https://learn.adafruit.com/micropython-basics-load-files-and-run-code/install-ampy
+    * deploy: `make deploy-release`
 
 
-2. Online 
-    * copy files with webrepl via accesspoint
-    * The accesspoint didn't work for me
+## Building on your own
 
-* You will need the following files under the same filenames intpo the root directory on the board:
-    * `boot.py`
-    * `connect_to_router.py`
-    * `alarm.py`
-    * `clock_actions_micropython.py`
-    * `time_setter.py`
-    * `main.py`
-    * `config.json`
-    * `alarmtime.json`
-* You will need to configure your private configs. Therefore put the following files into your root directory:
-    * `config_wifi.json` where you put the data of your network in the following format, static_ip is the ip which the controller will have at startup:
-        ```json
-         {
-            "ssid": "my_home_network_ssid",
-            "password": "my_password",
-            "static_ip": "my_chosen_static_ip_for_board"
-        }   
-        ```
-* branch off an on, main will start on boot
-* Now you can communicate with your board via webrepl, connecting to the static_ip configured
+1. Setup the firmware folder
+    * clone [micropython](https://github.com/micropython/micropython) to your workspace
+    * check out the `v1.9.3` tag
+    * build the unix port (as explained in the [micropython README.md](https://github.com/micropython/micropython/blob/master/README.md))
+    * install `picoweb`, `utemplate` and its dependencies into the `micropython/ports/esp8266/modules` folder using `upip`:
+      ```
+      cd micropython/ports/esp8266/modules
+      <path/to>/micropython -m upip install -p . picoweb utemplate
+      <path/to>/micropython -m upip install -p . micropython-collections.deque
+      ```
+    * clone [micropython-lib](https://github.com/micropython/micropython-lib) to your workspace
+    * check out the `v1.9.3` tag
+    * override lib dependencies with correct version in the `micropython/ports/esp8266/modules` folder using soft links:
+      ```
+      cd micropython/ports/esp8266/modules
+      rm -r pkg_resources.py uasyncio
+      ln -s <path/to>/micropython-lib/logging/logging.py .
+      ln -s <path/to>/micropython-lib/pkg_resources/pkg_resources.py .
+      mkdir uasyncio
+      ln -s <path/to>/micropython-lib/uasyncio/uasyncio/__init__.py uasyncio/
+      ln -s <path/to>/micropython-lib/uasyncio.core/uasyncio/core.py uasyncio/
+      ```
+    * link `alarmclock` and `webapp` folders into into the `micropython/ports/esp8266/modules` folder using soft links:
+      ```
+      ln -s <path/to>/lightclock/webapp .
+      ln -s <path/to>/lightclock/alarmclock .
+      ```
+
+1. Add temperature sensor support:
+    * clone [mcp9808](https://github.com/patvdleer/micropython-mcp9808) to your workspace
+    * link to it in the `micropython/ports/esp8266/modules` folder using a soft link:
+      ```
+      cd <path/to>/micropython/ports/esp8266/modules
+      ln -s <path/to>/mcp9808/mcp9808.py .
+      ```
+
+2. Build the firmware with frozen lightclock modules
+    ```
+    cd <path/to>/micropython/ports/esp8266
+    make axtls
+    make
+    ```
+    see also [detailed instructions here](https://learn.adafruit.com/micropython-basics-loading-modules/frozen-modules)
+
+3. Deploy the freshly built firmware:
+    * as with normal micropython firmware, erase and write the flash as described in the [micropython install instructions](https://docs.micropython.org/en/latest/esp8266/esp8266/tutorial/intro.html) using the freshly build firmware `build/firmware-combined.bin`:
+    ```
+    esptool.py --port /dev/ttyUSB0 erase_flash
+    esptool.py --port /dev/ttyUSB0 --baud 460800 write_flash --flash_size=detect 0 build/firmware-combined.bin
+    ```
+    * restart the microcontroller afterwards
+
+3. Build webapp content
+    * clone [utemplate](https://github.com/pfalcon/utemplate) to your workspace
+    * build the webapp templates (assumes utemplate is in the same folder as lightclock):  
+    `make webapp-templates`
+    * compress static stylesheets and javascripts  
+    `make webapp-static`
+
+3. Deploy webapp content etc. to the board:
+    * install ampy: `sudo pip2 install adafruit-ampy`
+    * deploy: `make deploy-without-modules` (it takes a while!)
+
+4. Finalize
+    * You will need to configure your private configs. Therefore put the following files into your root directory:
+        * `config_wifi.json` where you put the data of your network in the following format, static_ip is the ip which the controller will have at startup:
+            ```json
+             {
+                "ssid": "my_home_network_ssid",
+                "password": "my_password",
+                "static_ip": "my_chosen_static_ip_for_board"
+            }   
+            ```
+    * branch off an on, main will start on boot
 
 
 ## Usage
 
-Offline:
-* plugin your usb cable and modify config.json and alarmtime.json
-
-Online:
-* set up static IP on your router
-
-EITHER: 
-* Send file using WebRepl <http://micropython.org/webrepl/>
-
-OR:
-* access the html interface to modfiy the configs (not yet implemented)
-
-## Sources
-
-    * https://learn.adafruit.com/micropython-basics-esp8266-webrepl/access-webrepl
-
-## Todo
-
-* html interface - only server and trigger when html was altered or run parallel?
-
-## History
-
+Connect to `http://<static_ip>:8081/` in a browser
 
 ## Credits
 
 Johannes Gräter
+Piotr Orzechowski
 
 ## License
 

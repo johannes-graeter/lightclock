@@ -1,0 +1,90 @@
+{% args params %}
+<!DOCTYPE html>
+<html lang="en">
+<header>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Lightclock configuration App</title>
+
+    {% if 'offline_mode' in params.keys() %}
+        <link rel="stylesheet" href="bootstrap.min.css">
+    {% else %}
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    {% endif %}
+    <link href="bootstrap-clockpicker.min.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+</header>
+<body>
+  <div class="container">
+    <form class="form-horizontal form-config" action="/" method="post">
+      <h1 class="current-time">{{ params['current_time']['value'][3] }}:{{ params['current_time']['value'][4] }}</h1>
+
+      <div class="info-bar">
+        <div class="clockpicker" data-autoclose="true" data-default="{{ params['alarmtime']['value'] }}">
+          <span class="glyphicon glyphicon-bell"></span>
+          <input type="text" class="" name="alarmtime" id="alarmtime" placeholder="{{ params['alarmtime']['value'] }}">
+        </div>
+        {% if 'current_temp' in params.keys() %}
+          <span class="glyphicon glyphicon-fire"></span>
+          <span class="current-temp">{{ params['current_temp']['value'][0] }}.{{params['current_temp']['value'][1] }}&deg;C</span>
+        {% endif %}
+      </div>
+
+      <h3 class="form-config-heading">
+        <a data-toggle="collapse" href=".form-fields">
+          Lightclock settings
+          <span class="glyphicon glyphicon-triangle-bottom"></span>
+        </a>
+      </h3>
+
+      <div class="form-fields collapse">
+        {% for param_name, param_data in params.items() %}
+          {% if 'html_type' in param_data and param_name!='alarmtime' and (not 'offline_only' in param_data or 'offline_mode' in params.keys()) %}
+            <div class="form-group">
+              <label for="{{ param_name }}" class="col-sm-8 control-label">
+                {% if 'description' in param_data %}
+                  {{ param_data['description'] }}
+                {% else %}
+                  {{ param_name }}
+                {% endif %}
+              </label>
+
+              <div class="col-sm-4">
+                <input type="{{ param_data['html_type'] }}" class="form-control" name="{{ param_name }}" id="{{ param_name }}"
+                      {% if 'min' in param_data %}
+                        min="{{ param_data['min'] }}"
+                      {% endif %}
+                      {% if 'max' in param_data %}
+                        max="{{ param_data['max'] }}"
+                      {% endif %}
+                      placeholder="{{ param_data['value'] }}">
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+
+        <div class="form-group form-config-submit">
+          <button type="submit" class="btn btn-lg btn-primary btn-block">Save</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  {% if 'offline_mode' in params.keys() %}
+    <script src="jquery.min.js"></script>
+    <script src="bootstrap.min.js"></script>
+  {% else %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  {% endif %}
+  <script src="bootstrap-clockpicker.min.js"></script>
+  <script type="text/javascript">
+    $('.clockpicker').clockpicker()
+        .find('input').change(function(){
+            $("form").submit();
+        });
+  </script>
+</body>
+</html>

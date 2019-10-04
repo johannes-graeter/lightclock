@@ -5,7 +5,7 @@ from profile_printer import *
 
 
 def main():
-    sunriseTime=20.*60.
+    sunriseTime = 20. * 60.
     s = SunriseExp()
     s.set_sunrise_time(sunriseTime)
     s.set_exp_vars(5., 3.5)
