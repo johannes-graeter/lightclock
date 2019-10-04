@@ -45,6 +45,14 @@ erase:
 	ampy rm boot.py
 	ampy rm main.py
 
+erase-without-modules:
+	ampy rm config.json
+	ampy rm connect_to_router.py
+	ampy rmdir webapp_templates
+	ampy rmdir webapp
+	ampy rm boot.py
+	ampy rm main.py
+
 webapp-static:
 	find webapp_static -name "*.css" -print0 | xargs -0 -I % gzip -k -f --best %
 	find webapp_static -name "*.js" -print0 | xargs -0 -I % gzip -k -f --best %
