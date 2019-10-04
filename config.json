@@ -14,5 +14,6 @@
     "sdl_pin": {"value": 5},
     "sda_pin": {"value": 4},
     "temp_log_file": {"value": "temp_log.csv"},
+    "temp_log_file_max_bytes": {"value": 10240},
     "shutdown_hysteresis": {"value": 2}
 }

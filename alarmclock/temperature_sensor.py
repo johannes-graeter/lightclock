@@ -1,6 +1,7 @@
 from machine import Pin, I2C
 import mcp9808
 import utime as time
+import uos
 
 from alarmclock.with_config import WithConfig
 from alarmclock.fan import Fan
@@ -62,7 +63,11 @@ class TemperatureLogger(TemperatureSensor):
     def main_action(self, dt):
         temp, frac = self.measure_temp()
 
-        logfile = open(self.config['temp_log_file']['value'], "a")
+        if uos.stat('temp_log.csv')[6] > self.config['temp_log_file_max_bytes']['value']:
+            logfile = open(self.config['temp_log_file']['value'], "w")
+            logfile.write("#time,temp\n")
+        else:
+            logfile = open(self.config['temp_log_file']['value'], "a")
 
         if not self.is_functional:
             logfile.write("{:d},NA\n".format(time.time()))
