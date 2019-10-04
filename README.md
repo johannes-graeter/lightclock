@@ -42,6 +42,14 @@ Tested with HUZZAH ESP8266 Feather.
       ln -s <path/to>/lightclock/alarmclock .
       ```
 
+1. Add temperature sensor support:
+    * clone [mcp9808](https://github.com/patvdleer/micropython-mcp9808) to your workspace
+    * link to it in the `micropython/ports/esp8266/modules` folder using a soft link:
+      ```
+      cd <path/to>/micropython/ports/esp8266/modules
+      ln -s <path/to>/mcp9808/mcp9808.py .
+      ```
+
 2. Build the firmware with frozen lightclock modules
     ```
     cd <path/to>/micropython/ports/esp8266
@@ -56,6 +64,7 @@ Tested with HUZZAH ESP8266 Feather.
     esptool.py --port /dev/ttyUSB0 erase_flash
     esptool.py --port /dev/ttyUSB0 --baud 460800 write_flash --flash_size=detect 0 build/firmware-combined.bin
     ```
+    * restart the microcontroller afterwards
 
 3. Build webapp content
     * clone [utemplate](https://github.com/pfalcon/utemplate) to your workspace
@@ -67,14 +76,6 @@ Tested with HUZZAH ESP8266 Feather.
 3. Deploy webapp content etc. to the board:
     * install ampy: `sudo pip2 install adafruit-ampy`
     * deploy: `make deploy-without-modules` (it takes a while!)
-
-3. Add temperature sensor support:
-    * clone [mcp9808](https://github.com/patvdleer/micropython-mcp9808) to your workspace
-    * link to it in the `micropython/ports/esp8266/modules` folder using a soft link:
-      ```
-      cd <path/to>/micropython/ports/esp8266/modules
-      ln -s <path/to>/mcp9808/mcp9808.py .
-      ```
 
 4. Finalize
     * You will need to configure your private configs. Therefore put the following files into your root directory:
