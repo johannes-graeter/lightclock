@@ -21,8 +21,15 @@
     <form class="form-horizontal form-config" action="/" method="post">
       <h1 class="current-time">{{ params['current_time']['value'][3] }}:{{ params['current_time']['value'][4] }}</h1>
 
-      <div class="glyphicon glyphicon-bell clockpicker" data-autoclose="true" data-default="{{ params['alarmtime']['value'] }}">
-        <input type="text" class="" name="alarmtime" id="alarmtime" placeholder="{{ params['alarmtime']['value'] }}">
+      <div class="info-bar">
+        <div class="clockpicker" data-autoclose="true" data-default="{{ params['alarmtime']['value'] }}">
+          <span class="glyphicon glyphicon-bell"></span>
+          <input type="text" class="" name="alarmtime" id="alarmtime" placeholder="{{ params['alarmtime']['value'] }}">
+        </div>
+        {% if 'current_temp' in params.keys() %}
+          <span class="glyphicon glyphicon-fire"></span>
+          <span class="current-temp">{{ params['current_temp']['value'][0] }}.{{params['current_temp']['value'][1] }}&deg;C</span>
+        {% endif %}
       </div>
 
       <h3 class="form-config-heading">

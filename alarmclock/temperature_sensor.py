@@ -39,6 +39,8 @@ class TemperatureSensor(WithConfig):
                 if self.config['verbose']['value']:
                     print ("Temperature is: {:d}.{:d}".format(temp, frac))
 
+                self.config['current_temp'] = {'value': (temp, frac)}
+
                 return temp, frac
 
             except Exception:
